@@ -10,6 +10,7 @@ class WorkExperience extends Model
 {
     use HasFactory;
 
+    protected $table = 'work_experiences';
     /**
      * The attributes that are mass assignable.
      *

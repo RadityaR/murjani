@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Employees')
+@section('title', 'Karyawan')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -9,9 +9,9 @@
 @section('content')
 <section class="section">
     <div class="section-header">
-        <h1>Employees</h1>
+        <h1>Karyawan</h1>
         <div class="section-header-button">
-            <a href="{{ route('employees.create') }}" class="btn btn-primary">Add New</a>
+            <a href="{{ route('employees.create') }}" class="btn btn-primary">Tambah Baru</a>
         </div>
     </div>
 
@@ -29,7 +29,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h4>Employee List</h4>
+                <h4>Daftar Karyawan</h4>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -37,11 +37,11 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Name</th>
+                                <th>Nama</th>
                                 <th>Email</th>
-                                <th>Phone</th>
-                                <th>Gender</th>
-                                <th>Actions</th>
+                                <th>Telepon</th>
+                                <th>Jenis Kelamin</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -62,7 +62,7 @@
                                         <form action="{{ route('employees.destroy', $employee) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this employee?')">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus karyawan ini?')">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -70,7 +70,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center">No employees found</td>
+                                    <td colspan="6" class="text-center">Tidak ada data karyawan</td>
                                 </tr>
                             @endforelse
                         </tbody>

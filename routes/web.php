@@ -10,7 +10,7 @@ Route::get('/', function () {
 });
 
 Auth::routes();
-
+Route::resource('employees', EmployeeController::class);
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -25,7 +25,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/hakakses/delete/{id}', [App\Http\Controllers\HakaksesController::class, 'destroy'])->name('hakakses.delete')->middleware('superadmin');
 
     // Employee routes
-    Route::resource('employees', EmployeeController::class);
+  
 
     Route::get('/table-example', [App\Http\Controllers\ExampleController::class, 'table'])->name('table.example');
     Route::get('/clock-example', [App\Http\Controllers\ExampleController::class, 'clock'])->name('clock.example');

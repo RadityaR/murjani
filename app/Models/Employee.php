@@ -10,6 +10,7 @@ class Employee extends Model
 {
     use HasFactory;
 
+    protected $table = 'employees';
     /**
      * The attributes that are mass assignable.
      *

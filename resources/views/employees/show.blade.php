@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Employee Details')
+@section('title', 'Detail Karyawan')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -9,10 +9,10 @@
 @section('content')
 <section class="section">
     <div class="section-header">
-        <h1>Employee Details</h1>
+        <h1>Detail Karyawan</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('employees.index') }}">Employees</a></div>
-            <div class="breadcrumb-item">Employee Details</div>
+            <div class="breadcrumb-item"><a href="{{ route('employees.index') }}">Karyawan</a></div>
+            <div class="breadcrumb-item">Detail Karyawan</div>
         </div>
     </div>
 
@@ -32,16 +32,16 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Employee Information</h4>
+                        <h4>Informasi Karyawan</h4>
                         <div class="card-header-action">
                             <a href="{{ route('employees.edit', $employee) }}" class="btn btn-primary">
-                                <i class="fas fa-pencil-alt"></i> Edit
+                                <i class="fas fa-pencil-alt"></i> Ubah
                             </a>
                             <form action="{{ route('employees.destroy', $employee) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this employee?')">
-                                    <i class="fas fa-trash"></i> Delete
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus karyawan ini?')">
+                                    <i class="fas fa-trash"></i> Hapus
                                 </button>
                             </form>
                         </div>
@@ -51,7 +51,7 @@
                             <div class="col-md-6">
                                 <table class="table table-bordered">
                                     <tr>
-                                        <th width="30%">Name</th>
+                                        <th width="30%">Nama</th>
                                         <td>{{ $employee->name }}</td>
                                     </tr>
                                     <tr>
@@ -59,19 +59,19 @@
                                         <td>{{ $employee->email }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Phone</th>
+                                        <th>Telepon</th>
                                         <td>{{ $employee->phone }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Date of Birth</th>
+                                        <th>Tanggal Lahir</th>
                                         <td>{{ $employee->date_of_birth->format('d F Y') }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Gender</th>
+                                        <th>Jenis Kelamin</th>
                                         <td>{{ $employee->gender }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Marital Status</th>
+                                        <th>Status Pernikahan</th>
                                         <td>{{ $employee->marital_status }}</td>
                                     </tr>
                                 </table>
@@ -79,27 +79,27 @@
                             <div class="col-md-6">
                                 <table class="table table-bordered">
                                     <tr>
-                                        <th width="30%">Address</th>
+                                        <th width="30%">Alamat</th>
                                         <td>{{ $employee->address }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Height</th>
+                                        <th>Tinggi Badan</th>
                                         <td>{{ $employee->height_cm }} cm</td>
                                     </tr>
                                     <tr>
-                                        <th>Weight</th>
+                                        <th>Berat Badan</th>
                                         <td>{{ $employee->weight_kg }} kg</td>
                                     </tr>
                                     <tr>
-                                        <th>Blood Type</th>
+                                        <th>Golongan Darah</th>
                                         <td>{{ $employee->blood_type }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Religion</th>
+                                        <th>Agama</th>
                                         <td>{{ $employee->religion }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Hobby</th>
+                                        <th>Hobi</th>
                                         <td>{{ $employee->hobby }}</td>
                                     </tr>
                                 </table>
@@ -115,7 +115,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Education</h4>
+                        <h4>Pendidikan</h4>
                     </div>
                     <div class="card-body">
                         @if($employee->educations->count() > 0)
@@ -123,16 +123,16 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Type</th>
-                                            <th>Institution</th>
-                                            <th>Level</th>
-                                            <th>Course</th>
+                                            <th>Jenis</th>
+                                            <th>Institusi</th>
+                                            <th>Tingkat</th>
+                                            <th>Kursus</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($employee->educations as $education)
                                             <tr>
-                                                <td>{{ ucfirst($education->type) }}</td>
+                                                <td>{{ $education->type === 'formal' ? 'Formal' : 'Non-Formal' }}</td>
                                                 <td>{{ $education->institution_name }}</td>
                                                 <td>{{ $education->level ?? '-' }}</td>
                                                 <td>{{ $education->course_name ?? '-' }}</td>
@@ -146,9 +146,9 @@
                                 <div class="empty-state-icon">
                                     <i class="fas fa-graduation-cap"></i>
                                 </div>
-                                <h2>No education records found</h2>
+                                <h2>Tidak ada data pendidikan</h2>
                                 <p class="lead">
-                                    No education records have been added for this employee yet.
+                                    Belum ada data pendidikan yang ditambahkan untuk karyawan ini.
                                 </p>
                             </div>
                         @endif
@@ -162,7 +162,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Work Experience</h4>
+                        <h4>Pengalaman Kerja</h4>
                     </div>
                     <div class="card-body">
                         @if($employee->workExperiences->count() > 0)
@@ -170,11 +170,11 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Company</th>
-                                            <th>Position</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Description</th>
+                                            <th>Perusahaan</th>
+                                            <th>Jabatan</th>
+                                            <th>Tanggal Mulai</th>
+                                            <th>Tanggal Selesai</th>
+                                            <th>Deskripsi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -183,7 +183,7 @@
                                                 <td>{{ $workExperience->company }}</td>
                                                 <td>{{ $workExperience->position ?? '-' }}</td>
                                                 <td>{{ $workExperience->start_date ? $workExperience->start_date->format('d M Y') : '-' }}</td>
-                                                <td>{{ $workExperience->end_date ? $workExperience->end_date->format('d M Y') : '-' }}</td>
+                                                <td>{{ $workExperience->end_date ? $workExperience->end_date->format('d M Y') : 'Sekarang' }}</td>
                                                 <td>{{ $workExperience->description ?? '-' }}</td>
                                             </tr>
                                         @endforeach
@@ -195,9 +195,9 @@
                                 <div class="empty-state-icon">
                                     <i class="fas fa-briefcase"></i>
                                 </div>
-                                <h2>No work experience records found</h2>
+                                <h2>Tidak ada data pengalaman kerja</h2>
                                 <p class="lead">
-                                    No work experience records have been added for this employee yet.
+                                    Belum ada data pengalaman kerja yang ditambahkan untuk karyawan ini.
                                 </p>
                             </div>
                         @endif
