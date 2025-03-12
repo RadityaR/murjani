@@ -179,13 +179,105 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Welcome to Dashboard</h4>
+                            <h4>Data Pegawai Saya</h4>
                         </div>
                         <div class="card-body">
-                            <p>Hello {{ auth()->user()->name }}, you are logged in as {{ ucfirst(auth()->user()->role) }}.</p>
-                            @if(session('status'))
-                                <div class="alert alert-success" role="alert">
-                                    {{ session('status') }}
+                            @if($employee)
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th width="30%">Nama</th>
+                                                <td>{{ $employee->name }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>NIP</th>
+                                                <td>{{ $employee->nip ?? '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Golongan</th>
+                                                <td>{{ $employee->golongan ?? '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Jabatan</th>
+                                                <td>{{ $employee->jabatan ?? '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Status Pegawai</th>
+                                                <td>{{ $employee->employee_status ?? '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Unit Kerja</th>
+                                                <td>{{ $employee->unit_kerja ?? '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Email</th>
+                                                <td>{{ $employee->email }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Telepon</th>
+                                                <td>{{ $employee->phone }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th width="30%">Tanggal Lahir</th>
+                                                <td>{{ $employee->date_of_birth->format('d F Y') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Jenis Kelamin</th>
+                                                <td>{{ $employee->gender }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Status Pernikahan</th>
+                                                <td>{{ $employee->marital_status }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Agama</th>
+                                                <td>{{ $employee->religion }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Golongan Darah</th>
+                                                <td>{{ $employee->blood_type }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tinggi Badan</th>
+                                                <td>{{ $employee->height_cm }} cm</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Berat Badan</th>
+                                                <td>{{ $employee->weight_kg }} kg</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Hobi</th>
+                                                <td>{{ $employee->hobby }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                @if($employee->employee_document)
+                                    <div class="mt-4">
+                                        <h5>Dokumen Pegawai</h5>
+                                        <a href="{{ asset('storage/employee-documents/' . $employee->employee_document) }}" class="btn btn-info" target="_blank">
+                                            <i class="fas fa-file-alt"></i> Lihat Dokumen
+                                        </a>
+                                    </div>
+                                @endif
+                            @else
+                                <div class="empty-state" data-height="400">
+                                    <div class="empty-state-icon bg-warning">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <h2>Data Pegawai Belum Tersedia</h2>
+                                    <p class="lead">
+                                        Data pegawai Anda belum terdaftar dalam sistem.
+                                        Silakan tambahkan data Anda menggunakan tombol di bawah ini.
+                                    </p>
+                                    <a href="{{ route('employees.create') }}" class="btn btn-warning mt-4">
+                                        <i class="fas fa-plus"></i> Tambah Data Pegawai
+                                    </a>
                                 </div>
                             @endif
                         </div>

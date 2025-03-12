@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Employee;
 
 class HomeController extends Controller
 {
@@ -23,7 +24,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $user = auth()->user();
+        $employee = Employee::where('nip', $user->nip)->first();
+        
+        return view('home', compact('employee'));
     }
 
     public function blank()

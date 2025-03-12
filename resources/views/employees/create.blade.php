@@ -41,7 +41,12 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="name">Nama <span class="text-danger">*</span></label>
-                                <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+                                <input type="text" 
+                                       id="name" 
+                                       name="name" 
+                                       class="form-control @error('name') is-invalid @enderror" 
+                                       value="{{ old('name', $user->name ?? '') }}" 
+                                       required>
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -50,7 +55,12 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="email">Email <span class="text-danger">*</span></label>
-                                <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+                                <input type="email" 
+                                       id="email" 
+                                       name="email" 
+                                       class="form-control @error('email') is-invalid @enderror" 
+                                       value="{{ old('email', $user->email ?? '') }}" 
+                                       required>
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -60,18 +70,31 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="ktp_number">Nomor KTP</label>
-                                <input type="text" id="ktp_number" name="ktp_number" class="form-control @error('ktp_number') is-invalid @enderror" value="{{ old('ktp_number') }}">
-                                @error('ktp_number')
+                                <label for="nip">NIP <span class="text-danger">*</span></label>
+                                @if(auth()->user()->role === 'admin')
+                                    <input type="text" 
+                                           id="nip" 
+                                           name="nip" 
+                                           class="form-control @error('nip') is-invalid @enderror" 
+                                           value="{{ old('nip') }}" 
+                                           required>
+                                @else
+                                    <input type="text" 
+                                           class="form-control" 
+                                           value="{{ auth()->user()->nip }}" 
+                                           readonly>
+                                    <small class="form-text text-muted">NIP akan diisi otomatis sesuai dengan akun Anda.</small>
+                                @endif
+                                @error('nip')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="nip">NIP</label>
-                                <input type="text" id="nip" name="nip" class="form-control @error('nip') is-invalid @enderror" value="{{ old('nip') }}">
-                                @error('nip')
+                                <label for="ktp_number">Nomor KTP</label>
+                                <input type="text" id="ktp_number" name="ktp_number" class="form-control @error('ktp_number') is-invalid @enderror" value="{{ old('ktp_number') }}">
+                                @error('ktp_number')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
