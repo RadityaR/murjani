@@ -26,8 +26,10 @@ class UpdateEmployeeRequest extends FormRequest
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'ktp_number' => ['sometimes', 'nullable', 'string', 'max:20'],
             'nip' => ['sometimes', 'nullable', 'string', 'max:20'],
+            'jabatan' => ['sometimes', 'nullable', 'string', 'max:255'],
             'golongan' => ['sometimes', 'nullable', 'string', 'max:10'],
             'employee_status' => ['sometimes', 'nullable', Rule::in(['Kontrak', 'PNS', 'PPPK'])],
+            'unit_kerja' => ['sometimes', 'nullable', 'string', 'max:255'],
             'address' => ['sometimes', 'required', 'string'],
             'phone' => ['sometimes', 'required', 'string', 'max:20'],
             'email' => [
@@ -46,7 +48,7 @@ class UpdateEmployeeRequest extends FormRequest
             'blood_type' => ['sometimes', 'required', Rule::in(['A', 'B', 'AB', 'O'])],
             'religion' => ['sometimes', 'required', 'string', 'max:50'],
             'hobby' => ['sometimes', 'required', 'string', 'max:255'],
-            
+            'sip' => ['sometimes', 'required', Rule::in(['Hidup', 'Mati', 'Tidak Punya'])],
             // Education validation
             'educations' => ['sometimes', 'nullable', 'array'],
             'educations.*.id' => ['nullable', 'exists:educations,id'],

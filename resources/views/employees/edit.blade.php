@@ -82,6 +82,27 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label for="jabatan">Jabatan</label>
+                                <input type="text" id="jabatan" name="jabatan" class="form-control @error('jabatan') is-invalid @enderror" value="{{ old('jabatan', $employee->jabatan) }}">
+                                @error('jabatan')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="unit_kerja">Unit Kerja</label>
+                                <input type="text" id="unit_kerja" name="unit_kerja" class="form-control @error('unit_kerja') is-invalid @enderror" value="{{ old('unit_kerja', $employee->unit_kerja) }}">
+                                @error('unit_kerja')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>  
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label for="golongan">Golongan</label>
                                 <input type="text" id="golongan" name="golongan" class="form-control @error('golongan') is-invalid @enderror" value="{{ old('golongan', $employee->golongan) }}">
                                 @error('golongan')
@@ -215,6 +236,22 @@
                                 <label for="hobby">Hobby <span class="text-danger">*</span></label>
                                 <input type="text" id="hobby" name="hobby" class="form-control @error('hobby') is-invalid @enderror" value="{{ old('hobby', $employee->hobby) }}" required>
                                 @error('hobby')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="sip">SIP</label>
+                                <select id="sip" name="sip" class="form-control select2 @error('sip') is-invalid @enderror">
+                                    <option value="">Pilih SIP</option>
+                                    <option value="Hidup" {{ old('sip', $employee->sip) == 'Hidup' ? 'selected' : '' }}>Hidup</option>
+                                    <option value="Mati" {{ old('sip', $employee->sip) == 'Mati' ? 'selected' : '' }}>Mati</option>
+                                    <option value="Tidak Punya" {{ old('sip', $employee->sip) == 'Tidak Punya' ? 'selected' : '' }}>Tidak Punya</option>
+                                </select>
+                                @error('sip')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>

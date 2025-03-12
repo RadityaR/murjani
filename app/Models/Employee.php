@@ -21,7 +21,9 @@ class Employee extends Model
         'ktp_number',
         'nip',
         'golongan',
+        'jabatan',
         'employee_status',
+        'unit_kerja',
         'address',
         'phone',
         'email',
@@ -33,6 +35,7 @@ class Employee extends Model
         'blood_type',
         'religion',
         'hobby',
+        'sip',
     ];
 
     /**

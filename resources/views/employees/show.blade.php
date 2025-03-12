@@ -90,6 +90,10 @@
                                         <th>Status Pernikahan</th>
                                         <td>{{ $employee->marital_status }}</td>
                                     </tr>
+                                    <tr>
+                                        <th>SIP</th>
+                                        <td>{{ $employee->sip ?? '-' }}</td>
+                                    </tr>
                                 </table>
                             </div>
                             <div class="col-md-6">

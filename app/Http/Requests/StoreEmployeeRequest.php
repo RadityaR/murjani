@@ -26,6 +26,7 @@ class StoreEmployeeRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'ktp_number' => ['nullable', 'string', 'max:20'],
             'nip' => ['nullable', 'string', 'max:20'],
+            'jabatan' => ['nullable', 'string', 'max:255'],
             'golongan' => ['nullable', 'string', 'max:10'],
             'employee_status' => ['nullable', Rule::in(['Kontrak', 'PNS', 'PPPK'])],
             'address' => ['required', 'string'],
@@ -39,7 +40,7 @@ class StoreEmployeeRequest extends FormRequest
             'blood_type' => ['required', Rule::in(['A', 'B', 'AB', 'O'])],
             'religion' => ['required', 'string', 'max:50'],
             'hobby' => ['required', 'string', 'max:255'],
-            
+            'unit_kerja' => ['nullable', 'string', 'max:255'],
             // Education validation
             'educations' => ['nullable', 'array'],
             'educations.*.type' => ['required', 'string', Rule::in(['formal', 'informal'])],

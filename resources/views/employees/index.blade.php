@@ -36,9 +36,12 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>NIP</th>
                                 <th>Nama</th>
-                                <th>Email</th>
+                                <th>Jabatan</th>
+                                <th>Golongan</th>
+                                <th>Status Pegawai</th>
+                                <th>Unit Kerja</th>
                                 <th>Telepon</th>
                                 <th>Jenis Kelamin</th>
                                 <th>Aksi</th>
@@ -47,9 +50,12 @@
                         <tbody>
                             @forelse($employees as $employee)
                                 <tr>
-                                    <td>{{ $employee->id }}</td>
+                                    <td>{{ $employee->nip }}</td>
                                     <td>{{ $employee->name }}</td>
-                                    <td>{{ $employee->email }}</td>
+                                    <td>{{ $employee->jabatan }}</td>
+                                    <td>{{ $employee->golongan }}</td>
+                                    <td>{{ $employee->employee_status }}</td>
+                                    <td>{{ $employee->unit_kerja }}</td>
                                     <td>{{ $employee->phone }}</td>
                                     <td>{{ $employee->gender }}</td>
                                     <td>
