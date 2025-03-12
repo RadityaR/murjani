@@ -18,6 +18,16 @@
                 <a class="nav-link" href="{{ url('hakakses') }}"><i class="fas fa-user-shield"></i> <span>Hak Akses</span></a>
             </li>
             @endif
+            @if (Auth::user()->role == 'admin')
+            <li class="menu-header">User Management</li>
+            <li class="{{ Request::is('users*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('users.index') }}"><i class="fas fa-users"></i> <span>Manage Users</span></a>
+            </li>
+            <li class="menu-header">Employee Management</li>
+            <li class="{{ Request::is('employees*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('employees.index') }}"><i class="fas fa-user-tie"></i> <span>Data Pegawai</span></a>
+            </li>
+            @endif
             <!-- profile ganti password -->
             <li class="menu-header">Profile</li>
             <li class="{{ Request::is('profile/edit') ? 'active' : '' }}">

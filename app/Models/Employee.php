@@ -36,6 +36,7 @@ class Employee extends Model
         'religion',
         'hobby',
         'sip',
+        'employee_document',
     ];
 
     /**

@@ -10,6 +10,8 @@ use App\Models\WorkExperience;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EmployeeController extends Controller
 {
@@ -41,6 +43,15 @@ class EmployeeController extends Controller
         try {
             // Create employee
             $validatedData = $request->validated();
+            
+            // Handle file upload
+            if ($request->hasFile('employee_document')) {
+                $file = $request->file('employee_document');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('employee-documents', $fileName, 'public');
+                $validatedData['employee_document'] = $fileName;
+            }
+            
             $employee = Employee::create($validatedData);
             
             // Create educations if provided
@@ -197,6 +208,46 @@ class EmployeeController extends Controller
         $idsToDelete = array_diff($currentIds, $newIds);
         if (!empty($idsToDelete)) {
             WorkExperience::whereIn('id', $idsToDelete)->delete();
+        }
+    }
+
+    /**
+     * Show form for uploading employee document.
+     */
+    public function showUploadForm(Employee $employee): View
+    {
+        return view('employees.upload-document', compact('employee'));
+    }
+
+    /**
+     * Handle employee document upload.
+     */
+    public function uploadDocument(Request $request, Employee $employee): RedirectResponse
+    {
+        $request->validate([
+            'employee_document' => ['required', 'file', 'mimes:doc,docx,pdf', 'max:5120']
+        ]);
+
+        try {
+            // Delete old file if exists
+            if ($employee->employee_document) {
+                Storage::disk('public')->delete('employee-documents/' . $employee->employee_document);
+            }
+
+            // Upload new file
+            $file = $request->file('employee_document');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('employee-documents', $fileName, 'public');
+
+            // Update employee record
+            $employee->update(['employee_document' => $fileName]);
+
+            return redirect()->route('employees.show', $employee)
+                ->with('success', 'Document uploaded successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Failed to upload document. ' . $e->getMessage());
         }
     }
 } 

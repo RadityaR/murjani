@@ -41,6 +41,7 @@ class StoreEmployeeRequest extends FormRequest
             'religion' => ['required', 'string', 'max:50'],
             'hobby' => ['required', 'string', 'max:255'],
             'unit_kerja' => ['nullable', 'string', 'max:255'],
+            'employee_document' => ['nullable', 'file', 'mimes:doc,docx', 'max:5120'], // Max 5MB
             // Education validation
             'educations' => ['nullable', 'array'],
             'educations.*.type' => ['required', 'string', Rule::in(['formal', 'informal'])],

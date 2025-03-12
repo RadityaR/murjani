@@ -31,7 +31,7 @@
         @endif
 
         <div class="card">
-            <form action="{{ route('employees.store') }}" method="POST">
+            <form action="{{ route('employees.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="card-header">
                     <h4>Informasi Karyawan</h4>

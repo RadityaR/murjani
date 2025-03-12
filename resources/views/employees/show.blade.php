@@ -225,6 +225,47 @@
                 </div>
             </div>
         </div>
+
+        <!-- Document Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Dokumen Pegawai</h4>
+                        <div class="card-header-action">
+                            <a href="{{ route('employees.upload-form', $employee) }}" class="btn btn-primary">
+                                <i class="fas fa-upload"></i> Upload Dokumen
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @if($employee->employee_document)
+                            <div class="mb-3">
+                                <strong>Dokumen Form Data Pegawai:</strong>
+                                <div class="mt-2">
+                                    <a href="{{ asset('storage/employee-documents/' . $employee->employee_document) }}" class="btn btn-info" target="_blank">
+                                        <i class="fas fa-file-alt"></i> Lihat Dokumen
+                                    </a>
+                                </div>
+                            </div>
+                        @else
+                            <div class="empty-state" data-height="300">
+                                <div class="empty-state-icon">
+                                    <i class="fas fa-file-upload"></i>
+                                </div>
+                                <h2>Belum ada dokumen</h2>
+                                <p class="lead">
+                                    Belum ada Form Data Pegawai yang diupload untuk karyawan ini.
+                                </p>
+                                <a href="{{ route('employees.upload-form', $employee) }}" class="btn btn-primary mt-4">
+                                    <i class="fas fa-upload"></i> Upload Dokumen
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 @endsection
