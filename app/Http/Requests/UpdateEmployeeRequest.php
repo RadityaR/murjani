@@ -24,6 +24,10 @@ class UpdateEmployeeRequest extends FormRequest
     {
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'ktp_number' => ['sometimes', 'nullable', 'string', 'max:20'],
+            'nip' => ['sometimes', 'nullable', 'string', 'max:20'],
+            'golongan' => ['sometimes', 'nullable', 'string', 'max:10'],
+            'employee_status' => ['sometimes', 'nullable', Rule::in(['Kontrak', 'PNS', 'PPPK'])],
             'address' => ['sometimes', 'required', 'string'],
             'phone' => ['sometimes', 'required', 'string', 'max:20'],
             'email' => [

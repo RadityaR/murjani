@@ -60,6 +60,51 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label for="ktp_number">Nomor KTP</label>
+                                <input type="text" id="ktp_number" name="ktp_number" class="form-control @error('ktp_number') is-invalid @enderror" value="{{ old('ktp_number') }}">
+                                @error('ktp_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nip">NIP</label>
+                                <input type="text" id="nip" name="nip" class="form-control @error('nip') is-invalid @enderror" value="{{ old('nip') }}">
+                                @error('nip')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="golongan">Golongan</label>
+                                <input type="text" id="golongan" name="golongan" class="form-control @error('golongan') is-invalid @enderror" value="{{ old('golongan') }}">
+                                @error('golongan')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="employee_status">Status Pegawai</label>
+                                <select id="employee_status" name="employee_status" class="form-control select2 @error('employee_status') is-invalid @enderror">
+                                    <option value="">Pilih Status Pegawai</option>
+                                    <option value="Kontrak" {{ old('employee_status') == 'Kontrak' ? 'selected' : '' }}>Kontrak</option>
+                                    <option value="PNS" {{ old('employee_status') == 'PNS' ? 'selected' : '' }}>PNS</option>
+                                    <option value="PPPK" {{ old('employee_status') == 'PPPK' ? 'selected' : '' }}>PPPK</option>
+                                </select>
+                                @error('employee_status')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label for="phone">Telepon <span class="text-danger">*</span></label>
                                 <input type="text" id="phone" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}" required>
                                 @error('phone')

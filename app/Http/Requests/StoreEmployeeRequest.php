@@ -24,6 +24,10 @@ class StoreEmployeeRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'ktp_number' => ['nullable', 'string', 'max:20'],
+            'nip' => ['nullable', 'string', 'max:20'],
+            'golongan' => ['nullable', 'string', 'max:10'],
+            'employee_status' => ['nullable', Rule::in(['Kontrak', 'PNS', 'PPPK'])],
             'address' => ['required', 'string'],
             'phone' => ['required', 'string', 'max:20'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:employees'],

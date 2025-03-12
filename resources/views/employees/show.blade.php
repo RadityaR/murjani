@@ -55,6 +55,22 @@
                                         <td>{{ $employee->name }}</td>
                                     </tr>
                                     <tr>
+                                        <th>Nomor KTP</th>
+                                        <td>{{ $employee->ktp_number ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>NIP</th>
+                                        <td>{{ $employee->nip ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Golongan</th>
+                                        <td>{{ $employee->golongan ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Status Pegawai</th>
+                                        <td>{{ $employee->employee_status ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
                                         <th>Email</th>
                                         <td>{{ $employee->email }}</td>
                                     </tr>

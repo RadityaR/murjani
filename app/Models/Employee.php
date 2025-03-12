@@ -18,6 +18,10 @@ class Employee extends Model
      */
     protected $fillable = [
         'name',
+        'ktp_number',
+        'nip',
+        'golongan',
+        'employee_status',
         'address',
         'phone',
         'email',
