@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Employee extends Model
 {
@@ -17,13 +18,12 @@ class Employee extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'user_id',
         'name',
         'ktp_number',
         'nip',
         'golongan',
-        'jabatan',
         'employee_status',
-        'unit_kerja',
         'address',
         'phone',
         'email',
@@ -62,5 +62,13 @@ class Employee extends Model
     public function workExperiences(): HasMany
     {
         return $this->hasMany(WorkExperience::class);
+    }
+
+    /**
+     * Get the user that owns the employee.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 } 

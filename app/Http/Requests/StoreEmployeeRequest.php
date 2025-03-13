@@ -26,8 +26,7 @@ class StoreEmployeeRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'ktp_number' => ['nullable', 'string', 'max:20'],
             'nip' => ['nullable', 'string', 'max:20'],
-            'jabatan' => ['nullable', 'string', 'max:255'],
-            'golongan' => ['nullable', 'string', 'max:10'],
+            'golongan' => ['nullable', 'string', 'max:500'],
             'employee_status' => ['nullable', Rule::in(['Kontrak', 'PNS', 'PPPK'])],
             'address' => ['required', 'string'],
             'phone' => ['required', 'string', 'max:20'],
@@ -40,7 +39,6 @@ class StoreEmployeeRequest extends FormRequest
             'blood_type' => ['required', Rule::in(['A', 'B', 'AB', 'O'])],
             'religion' => ['required', 'string', 'max:50'],
             'hobby' => ['required', 'string', 'max:255'],
-            'unit_kerja' => ['nullable', 'string', 'max:255'],
             'employee_document' => ['nullable', 'file', 'mimes:doc,docx', 'max:5120'], // Max 5MB
             // Education validation
             'educations' => ['nullable', 'array'],
@@ -51,7 +49,7 @@ class StoreEmployeeRequest extends FormRequest
                 Rule::requiredIf(function () {
                     return collect($this->input('educations', []))->contains('type', 'formal');
                 }),
-                Rule::in(['SD', 'SLTP', 'SLTA', 'Perguruan Tinggi']),
+                Rule::in(['SD', 'SLTP', 'SLTA', 'Diploma', 'S1', 'S2', 'S3', 'Spesialis', 'Sub Spesialis']),
             ],
             'educations.*.course_name' => [
                 'nullable',

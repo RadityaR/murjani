@@ -103,29 +103,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="jabatan">Jabatan</label>
-                                <input type="text" id="jabatan" name="jabatan" class="form-control @error('jabatan') is-invalid @enderror" value="{{ old('jabatan') }}">
-                                @error('jabatan')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="unit_kerja">Unit Kerja</label>
-                                <input type="text" id="unit_kerja" name="unit_kerja" class="form-control @error('unit_kerja') is-invalid @enderror" value="{{ old('unit_kerja') }}">
-                                @error('unit_kerja')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="golongan">Golongan</label>
-                                <input type="text" id="golongan" name="golongan" class="form-control @error('golongan') is-invalid @enderror" value="{{ old('golongan') }}">
+                                <label for="golongan">Golongan/Jabatan/Unit Kerja</label>
+                                <input type="text" id="golongan" name="golongan" class="form-control @error('golongan') is-invalid @enderror" value="{{ old('golongan') }}" placeholder="Contoh: III/a - Kepala Seksi - Puskesmas">
+                                <small class="form-text text-muted">Masukkan golongan, jabatan, dan unit kerja (contoh: III/a - Kepala Seksi - Puskesmas)</small>
                                 @error('golongan')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -334,7 +314,12 @@
                                                         <option value="SD" {{ ($education['level'] ?? '') == 'SD' ? 'selected' : '' }}>SD</option>
                                                         <option value="SLTP" {{ ($education['level'] ?? '') == 'SLTP' ? 'selected' : '' }}>SLTP</option>
                                                         <option value="SLTA" {{ ($education['level'] ?? '') == 'SLTA' ? 'selected' : '' }}>SLTA</option>
-                                                        <option value="Perguruan Tinggi" {{ ($education['level'] ?? '') == 'Perguruan Tinggi' ? 'selected' : '' }}>Perguruan Tinggi</option>
+                                                        <option value="Diploma" {{ ($education['level'] ?? '') == 'Diploma' ? 'selected' : '' }}>Diploma</option>
+                                                        <option value="S1" {{ ($education['level'] ?? '') == 'S1' ? 'selected' : '' }}>S1</option>
+                                                        <option value="S2" {{ ($education['level'] ?? '') == 'S2' ? 'selected' : '' }}>S2</option>
+                                                        <option value="S3" {{ ($education['level'] ?? '') == 'S3' ? 'selected' : '' }}>S3</option>
+                                                        <option value="Spesialis" {{ ($education['level'] ?? '') == 'Spesialis' ? 'selected' : '' }}>Spesialis</option>
+                                                        <option value="Sub Spesialis" {{ ($education['level'] ?? '') == 'Sub Spesialis' ? 'selected' : '' }}>Sub Spesialis</option>
                                                     </select>
                                                     @error('educations.'.$index.'.level')
                                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -505,7 +490,12 @@
                                             <option value="SD">SD</option>
                                             <option value="SLTP">SLTP</option>
                                             <option value="SLTA">SLTA</option>
-                                            <option value="Perguruan Tinggi">Perguruan Tinggi</option>
+                                            <option value="Diploma">Diploma</option>
+                                            <option value="S1">S1</option>
+                                            <option value="S2">S2</option>
+                                            <option value="S3">S3</option>
+                                            <option value="Spesialis">Spesialis</option>
+                                            <option value="Sub Spesialis">Sub Spesialis</option>
                                         </select>
                                     </div>
                                 </div>

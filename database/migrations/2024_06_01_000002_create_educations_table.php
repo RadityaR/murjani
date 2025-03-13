@@ -16,7 +16,17 @@ return new class extends Migration
             $table->foreignId('employee_id')->constrained()->onDelete('cascade');
             $table->enum('type', ['formal', 'informal']);
             $table->string('institution_name');
-            $table->enum('level', ['SD', 'SLTP', 'SLTA', 'Perguruan Tinggi'])->nullable(); // For formal education
+            $table->enum('level', [
+                'SD', 
+                'SLTP', 
+                'SLTA', 
+                'Diploma', 
+                'S1', 
+                'S2', 
+                'S3', 
+                'Spesialis',
+                'Sub Spesialis'
+            ])->nullable(); // For formal education
             $table->string('course_name')->nullable(); // For informal education
             $table->timestamps();
         });

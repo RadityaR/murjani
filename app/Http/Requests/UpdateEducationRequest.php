@@ -29,7 +29,7 @@ class UpdateEducationRequest extends FormRequest
             'level' => [
                 'nullable',
                 Rule::requiredIf(fn () => $this->type === 'formal'),
-                Rule::in(['SD', 'SLTP', 'SLTA', 'Perguruan Tinggi']),
+                Rule::in(['SD', 'SLTP', 'SLTA', 'Diploma', 'S1', 'S2', 'S3', 'Spesialis', 'Sub Spesialis']),
             ],
             'course_name' => [
                 'nullable',

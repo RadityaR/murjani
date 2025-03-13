@@ -117,3 +117,71 @@ If you encounter any issues or have suggestions for improvements, please feel fr
 
 ### Edit User Profile Page
 ![Edit User Profile Page](img/edit.png "Edit User Profile Page")
+
+## Database Refresh and Seeding
+
+To refresh the database and run all seeders, use the following command:
+
+```bash
+php artisan app:refresh-database
+```
+
+This will:
+1. Drop all tables in the database
+2. Run all migrations
+3. Run all seeders
+
+If you want to skip the confirmation prompt, use the `--force` option:
+
+```bash
+php artisan app:refresh-database --force
+```
+
+## Seeders
+
+The following seeders are available:
+
+1. **UserSeeder**: Creates sample users with different roles (admin, hr, user)
+2. **EmployeeSeeder**: Creates sample employee records
+3. **EducationSeeder**: Creates sample education records for each employee
+4. **WorkExperienceSeeder**: Creates sample work experience records for each employee
+
+## Recent Changes
+
+### Combined Fields
+
+The following fields have been combined into a single field:
+- `golongan`, `jabatan`, and `unit_kerja` have been combined into the `golongan` field
+
+The format for the combined field is:
+```
+[Golongan] - [Jabatan] - [Unit Kerja]
+```
+
+Example: `III/a - Kepala Seksi - Puskesmas Kota`
+
+### Email Field
+
+The `email` field in the `employees` table has been made nullable.
+
+## Login Credentials
+
+You can log in with the following credentials:
+
+### Admin User
+- NIP: admin123
+- Password: password
+
+### HR User
+- NIP: 198505052018011002 (Budi Santoso)
+- Password: password
+
+### Regular User
+- NIP: 198001012010011001 (John Doe)
+- Password: password
+- NIP: 199005202015022002 (Jane Smith)
+- Password: password
+- NIP: 201001012022011001 (Ahmad Rizki)
+- Password: password
+- NIP: 198703152020032001 (Siti Rahayu)
+- Password: password

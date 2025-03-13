@@ -8,36 +8,30 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Education extends Model
 {
-
-    protected $table = 'educations';
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
+     * The table associated with the model.
      *
-     * @var array<int, string>
+     * @var string
      */
+    protected $table = 'educations';
+
     protected $fillable = [
         'employee_id',
         'type',
         'institution_name',
-        'level',
         'course_name',
+        'start_date',
+        'end_date',
+        'description'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        'type' => 'string',
-        'level' => 'string',
+        'start_date' => 'date',
+        'end_date' => 'date'
     ];
 
-    /**
-     * Get the employee that owns the education.
-     */
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);

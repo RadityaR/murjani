@@ -35,30 +35,16 @@
             </div>
             <div class="card-body">
                 <div class="row mb-4">
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <div class="form-group">
-                            <label for="unit-filter">Filter Unit Kerja:</label>
-                            <select class="form-control select2" id="unit-filter">
-                                <option value="">Semua Unit Kerja</option>
+                            <label for="golongan-filter">Filter Golongan/Jabatan/Unit Kerja:</label>
+                            <select class="form-control select2" id="golongan-filter">
+                                <option value="">Semua</option>
                                 @php
-                                    $units = \App\Models\Employee::distinct('unit_kerja')->pluck('unit_kerja');
+                                    $golongan = \App\Models\Employee::distinct('golongan')->pluck('golongan');
                                 @endphp
-                                @foreach($units as $unit)
-                                    <option value="{{ $unit }}">{{ $unit }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="jabatan-filter">Filter Jabatan:</label>
-                            <select class="form-control select2" id="jabatan-filter">
-                                <option value="">Semua Jabatan</option>
-                                @php
-                                    $jabatan = \App\Models\Employee::distinct('jabatan')->pluck('jabatan');
-                                @endphp
-                                @foreach($jabatan as $jab)
-                                    <option value="{{ $jab }}">{{ $jab }}</option>
+                                @foreach($golongan as $gol)
+                                    <option value="{{ $gol }}">{{ $gol }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -84,10 +70,8 @@
                             <tr>
                                 <th>NIP</th>
                                 <th>Nama</th>
-                                <th>Jabatan</th>
-                                <th>Golongan</th>
+                                <th>Golongan/Jabatan/Unit Kerja</th>
                                 <th>Status Pegawai</th>
-                                <th>Unit Kerja</th>
                                 <th>Telepon</th>
                                 <th>Jenis Kelamin</th>
                                 <th>Aksi</th>
@@ -98,14 +82,12 @@
                             <tr>
                                 <td>{{ $employee->nip }}</td>
                                 <td>{{ $employee->name }}</td>
-                                <td>{{ $employee->jabatan }}</td>
                                 <td>{{ $employee->golongan }}</td>
                                 <td>
                                     <div class="badge badge-{{ $employee->employee_status == 'PNS' ? 'info' : ($employee->employee_status == 'Kontrak' ? 'warning' : 'light') }}">
                                         {{ $employee->employee_status }}
                                     </div>
                                 </td>
-                                <td>{{ $employee->unit_kerja }}</td>
                                 <td>{{ $employee->phone }}</td>
                                 <td>{{ $employee->gender }}</td>
                                 <td>
@@ -172,16 +154,9 @@
                 }
             });
 
-            // Custom filtering function for unit kerja
-            $('#unit-filter').on('change', function() {
-                table.column(5) // Unit Kerja column
-                    .search(this.value)
-                    .draw();
-            });
-
-            // Custom filtering function for jabatan
-            $('#jabatan-filter').on('change', function() {
-                table.column(2) // Jabatan column
+            // Custom filtering function for golongan
+            $('#golongan-filter').on('change', function() {
+                table.column(2) // Golongan column
                     .search(this.value)
                     .draw();
             });
@@ -216,8 +191,7 @@
 
             // Reset all filters
             $('#reset-filters').on('click', function() {
-                $('#unit-filter').val('').trigger('change');
-                $('#jabatan-filter').val('').trigger('change');
+                $('#golongan-filter').val('').trigger('change');
                 $('#search-name').val('');
                 table
                     .search('')

@@ -2,6 +2,10 @@
 
 @section('title', 'Edit User')
 
+@php
+use Illuminate\Support\Facades\Auth;
+@endphp
+
 @push('style')
     <!-- CSS Libraries -->
     <link rel="stylesheet" href="{{ asset('library/select2/dist/css/select2.min.css') }}">
@@ -46,21 +50,6 @@
                                     </div>
 
                                     <div class="form-group col-md-6">
-                                        <label for="email">Email <span class="text-danger">*</span></label>
-                                        <input type="email" 
-                                               class="form-control @error('email') is-invalid @enderror" 
-                                               id="email" 
-                                               name="email" 
-                                               value="{{ old('email', $user->email) }}" 
-                                               required>
-                                        @error('email')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="form-group col-md-6">
                                         <label for="nip">NIP <span class="text-danger">*</span></label>
                                         <input type="text" 
                                                class="form-control @error('nip') is-invalid @enderror" 
@@ -72,7 +61,9 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                </div>
 
+                                <div class="row">
                                     <div class="form-group col-md-6">
                                         <label for="password">Password</label>
                                         <input type="password" 
@@ -84,41 +75,13 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
 
-                                <div class="row">
-                                    <div class="form-group col-md-6">
-                                        <label for="department">Department</label>
-                                        <input type="text" 
-                                               class="form-control @error('department') is-invalid @enderror" 
-                                               id="department" 
-                                               name="department" 
-                                               value="{{ old('department', $user->department) }}">
-                                        @error('department')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="position">Position</label>
-                                        <input type="text" 
-                                               class="form-control @error('position') is-invalid @enderror" 
-                                               id="position" 
-                                               name="position" 
-                                               value="{{ old('position', $user->position) }}">
-                                        @error('position')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="row">
                                     <div class="form-group col-md-6">
                                         <label for="role">Role <span class="text-danger">*</span></label>
                                         <select class="form-control select2 @error('role') is-invalid @enderror" 
                                                 id="role" 
                                                 name="role" 
-                                                {{ auth()->user()->role !== 'admin' ? 'disabled' : '' }}
+                                                {{ Auth::check() && Auth::user()->role !== 'admin' ? 'disabled' : '' }}
                                                 required>
                                             <option value="">Select Role</option>
                                             <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
@@ -129,81 +92,11 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="status">Status <span class="text-danger">*</span></label>
-                                        <select class="form-control select2 @error('status') is-invalid @enderror" 
-                                                id="status" 
-                                                name="status" 
-                                                {{ auth()->user()->role !== 'admin' ? 'disabled' : '' }}
-                                                required>
-                                            <option value="active" {{ old('status', $user->status) == 'active' ? 'selected' : '' }}>Active</option>
-                                            <option value="pending" {{ old('status', $user->status) == 'pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="suspended" {{ old('status', $user->status) == 'suspended' ? 'selected' : '' }}>Suspended</option>
-                                        </select>
-                                        @error('status')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="form-group col-md-6">
-                                        <label for="phone">Phone</label>
-                                        <input type="text" 
-                                               class="form-control @error('phone') is-invalid @enderror" 
-                                               id="phone" 
-                                               name="phone" 
-                                               value="{{ old('phone', $user->phone) }}">
-                                        @error('phone')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label>Permissions</label>
-                                        <div class="selectgroup selectgroup-pills">
-                                            <label class="selectgroup-item">
-                                                <input type="checkbox" 
-                                                       name="permissions[]" 
-                                                       value="view_reports" 
-                                                       class="selectgroup-input"
-                                                       {{ in_array('view_reports', old('permissions', $user->permissions ?? [])) ? 'checked' : '' }}
-                                                       {{ auth()->user()->role !== 'admin' ? 'disabled' : '' }}>
-                                                <span class="selectgroup-button">View Reports</span>
-                                            </label>
-                                            <label class="selectgroup-item">
-                                                <input type="checkbox" 
-                                                       name="permissions[]" 
-                                                       value="manage_employees" 
-                                                       class="selectgroup-input"
-                                                       {{ in_array('manage_employees', old('permissions', $user->permissions ?? [])) ? 'checked' : '' }}
-                                                       {{ auth()->user()->role !== 'admin' ? 'disabled' : '' }}>
-                                                <span class="selectgroup-button">Manage Employees</span>
-                                            </label>
-                                            <label class="selectgroup-item">
-                                                <input type="checkbox" 
-                                                       name="permissions[]" 
-                                                       value="manage_departments" 
-                                                       class="selectgroup-input"
-                                                       {{ in_array('manage_departments', old('permissions', $user->permissions ?? [])) ? 'checked' : '' }}
-                                                       {{ auth()->user()->role !== 'admin' ? 'disabled' : '' }}>
-                                                <span class="selectgroup-button">Manage Departments</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="notes">Notes</label>
-                                    <textarea class="form-control @error('notes') is-invalid @enderror" 
-                                              id="notes" 
-                                              name="notes" 
-                                              rows="3">{{ old('notes', $user->notes) }}</textarea>
-                                    @error('notes')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                                <!-- Hidden fields to preserve existing values -->
+                                <input type="hidden" name="email" value="{{ old('email', $user->email) }}">
+                                <input type="hidden" name="status" value="{{ old('status', $user->status) }}">
 
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -38,22 +39,30 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
             'nip' => 'required|string|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:admin,hr,user',
-            'phone' => 'nullable|string|max:20',
-            'department' => 'nullable|string|max:100',
-            'position' => 'nullable|string|max:100',
-            'notes' => 'nullable|string',
+            'email' => 'required|string|email|max:255|unique:users',
             'status' => 'required|in:active,suspended,pending',
-            'permissions' => 'nullable|array'
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
-        $validated['is_active'] = $request->status === 'active';
+        // Set default values for other fields
+        $userData = [
+            'name' => $validated['name'],
+            'nip' => $validated['nip'],
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
+            'email' => $validated['email'],
+            'is_active' => $validated['status'] === 'active',
+            'status' => $validated['status'],
+            'phone' => null,
+            'department' => null,
+            'position' => null,
+            'notes' => null,
+            'permissions' => null
+        ];
         
-        User::create($validated);
+        User::create($userData);
 
         return redirect()->route('users.index')
             ->with('success', 'User created successfully.');
@@ -73,7 +82,8 @@ class UserController extends Controller
     public function edit(User $user)
     {
         // Check if the authenticated user is trying to edit their own data
-        if (auth()->user()->role !== 'admin' && auth()->user()->nip !== $user->nip) {
+        $authUser = Auth::user();
+        if ($authUser && $authUser->role !== 'admin' && $authUser->nip !== $user->nip) {
             abort(403, 'You can only edit your own data.');
         }
 
@@ -86,36 +96,42 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         // Check if the authenticated user is trying to update their own data
-        if (auth()->user()->role !== 'admin' && auth()->user()->nip !== $user->nip) {
+        $authUser = Auth::user();
+        if ($authUser && $authUser->role !== 'admin' && $authUser->nip !== $user->nip) {
             abort(403, 'You can only update your own data.');
         }
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+            'nip' => 'required|string|unique:users,nip,'.$user->id,
             'password' => 'nullable|string|min:8',
-            'role' => auth()->user()->role === 'admin' ? 'required|in:admin,hr,user' : 'prohibited',
-            'phone' => 'nullable|string|max:20',
-            'department' => 'nullable|string|max:100',
-            'position' => 'nullable|string|max:100',
-            'notes' => 'nullable|string',
-            'status' => auth()->user()->role === 'admin' ? 'required|in:active,suspended,pending' : 'prohibited',
-            'permissions' => auth()->user()->role === 'admin' ? 'nullable|array' : 'prohibited'
+            'role' => $authUser && $authUser->role === 'admin' ? 'required|in:admin,hr,user' : 'prohibited',
+            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+            'status' => $authUser && $authUser->role === 'admin' ? 'required|in:active,suspended,pending' : 'prohibited',
         ]);
 
-        if (isset($validated['password'])) {
-            $validated['password'] = Hash::make($validated['password']);
-        } else {
-            unset($validated['password']);
+        // Prepare update data
+        $userData = [
+            'name' => $validated['name'],
+            'nip' => $validated['nip'],
+            'email' => $validated['email'],
+        ];
+
+        // Only update password if provided
+        if (isset($validated['password']) && !empty($validated['password'])) {
+            $userData['password'] = Hash::make($validated['password']);
         }
 
-        if (isset($validated['status'])) {
-            $validated['is_active'] = $validated['status'] === 'active';
+        // Only admin can update role and status
+        if ($authUser && $authUser->role === 'admin') {
+            $userData['role'] = $validated['role'];
+            $userData['status'] = $validated['status'];
+            $userData['is_active'] = $validated['status'] === 'active';
         }
 
-        $user->update($validated);
+        $user->update($userData);
 
-        return redirect()->route(auth()->user()->role === 'admin' ? 'users.index' : 'home')
+        return redirect()->route($authUser && $authUser->role === 'admin' ? 'users.index' : 'home')
             ->with('success', 'User updated successfully.');
     }
 
@@ -140,7 +156,8 @@ class UserController extends Controller
             'user_ids.*' => 'exists:users,id'
         ]);
 
-        if (!auth()->user()->isAdmin()) {
+        $authUser = Auth::user();
+        if (!$authUser || $authUser->role !== 'admin') {
             abort(403, 'Only administrators can perform bulk actions.');
         }
 
@@ -193,6 +210,13 @@ class UserController extends Controller
         }
 
         $users = $query->get();
+        
+        // Format the last_login_at field for display
+        $users->transform(function ($user) {
+            $user->last_login_at = $user->last_login_at ? $user->last_login_at->diffForHumans() : null;
+            return $user;
+        });
+
         return response()->json($users);
     }
 }

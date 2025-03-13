@@ -26,10 +26,8 @@ class UpdateEmployeeRequest extends FormRequest
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'ktp_number' => ['sometimes', 'nullable', 'string', 'max:20'],
             'nip' => ['sometimes', 'nullable', 'string', 'max:20'],
-            'jabatan' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'golongan' => ['sometimes', 'nullable', 'string', 'max:10'],
+            'golongan' => ['sometimes', 'nullable', 'string', 'max:500'],
             'employee_status' => ['sometimes', 'nullable', Rule::in(['Kontrak', 'PNS', 'PPPK'])],
-            'unit_kerja' => ['sometimes', 'nullable', 'string', 'max:255'],
             'address' => ['sometimes', 'required', 'string'],
             'phone' => ['sometimes', 'required', 'string', 'max:20'],
             'email' => [
@@ -60,7 +58,7 @@ class UpdateEmployeeRequest extends FormRequest
                     $index = explode('.', $attribute)[1];
                     return isset($this->educations[$index]['type']) && $this->educations[$index]['type'] === 'formal';
                 }),
-                Rule::in(['SD', 'SLTP', 'SLTA', 'Perguruan Tinggi']),
+                Rule::in(['SD', 'SLTP', 'SLTA', 'Diploma', 'S1', 'S2', 'S3', 'Spesialis', 'Sub Spesialis']),
             ],
             'educations.*.course_name' => [
                 'nullable',

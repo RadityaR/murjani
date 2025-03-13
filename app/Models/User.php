@@ -6,6 +6,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
+use Illuminate\Auth\MustVerifyEmail;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Foundation\Auth\Access\Authorizable;
 
 class User extends Authenticatable
 {
@@ -28,7 +39,10 @@ class User extends Authenticatable
         'permissions',
         'phone',
         'department',
-        'position'
+        'position',
+        'employee_status',
+        'golongan',
+        'address'
     ];
 
     /**
@@ -42,21 +56,18 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'password' => 'hashed',
-            'email_verified_at' => 'datetime',
-            'role' => 'string',
-            'is_active' => 'boolean',
-            'last_login_at' => 'datetime',
-            'permissions' => 'json'
-        ];
-    }
+    protected $casts = [
+        'password' => 'hashed',
+        'email_verified_at' => 'datetime',
+        'role' => 'string',
+        'is_active' => 'boolean',
+        'last_login_at' => 'datetime',
+        'permissions' => 'json'
+    ];
 
     /**
      * Check if the user is an admin
@@ -106,5 +117,28 @@ class User extends Authenticatable
             return 'inactive';
         }
         return $value;
+    }
+
+    /**
+     * Get the user's education records through employee.
+     */
+    public function educations(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Education::class,
+            Employee::class,
+            'user_id', // Foreign key on employees table
+            'employee_id', // Foreign key on educations table
+            'id', // Local key on users table
+            'id' // Local key on employees table
+        );
+    }
+
+    /**
+     * Get the user's employee record.
+     */
+    public function employee(): HasOne
+    {
+        return $this->hasOne(Employee::class);
     }
 }

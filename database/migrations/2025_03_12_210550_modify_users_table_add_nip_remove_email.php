@@ -12,10 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('nip')->unique()->after('id');
-            $table->dropColumn('email');
-            $table->dropColumn('email_verified_at');
-            $table->dropColumn('remember_token');
+            // Only add nip column if it doesn't already exist
+            if (!Schema::hasColumn('users', 'nip')) {
+                $table->string('nip')->unique()->after('id');
+            }
+            
+            // Only drop these columns if they exist
+            if (Schema::hasColumn('users', 'email')) {
+                $table->dropColumn('email');
+            }
+            
+            if (Schema::hasColumn('users', 'email_verified_at')) {
+                $table->dropColumn('email_verified_at');
+            }
+            
+            if (Schema::hasColumn('users', 'remember_token')) {
+                $table->dropColumn('remember_token');
+            }
         });
     }
 
@@ -25,10 +38,21 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('nip');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->rememberToken();
+            if (Schema::hasColumn('users', 'nip')) {
+                $table->dropColumn('nip');
+            }
+            
+            if (!Schema::hasColumn('users', 'email')) {
+                $table->string('email')->unique();
+            }
+            
+            if (!Schema::hasColumn('users', 'email_verified_at')) {
+                $table->timestamp('email_verified_at')->nullable();
+            }
+            
+            if (!Schema::hasColumn('users', 'remember_token')) {
+                $table->rememberToken();
+            }
         });
     }
 };

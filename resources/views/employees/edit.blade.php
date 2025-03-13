@@ -82,29 +82,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="jabatan">Jabatan</label>
-                                <input type="text" id="jabatan" name="jabatan" class="form-control @error('jabatan') is-invalid @enderror" value="{{ old('jabatan', $employee->jabatan) }}">
-                                @error('jabatan')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="unit_kerja">Unit Kerja</label>
-                                <input type="text" id="unit_kerja" name="unit_kerja" class="form-control @error('unit_kerja') is-invalid @enderror" value="{{ old('unit_kerja', $employee->unit_kerja) }}">
-                                @error('unit_kerja')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>  
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="golongan">Golongan</label>
-                                <input type="text" id="golongan" name="golongan" class="form-control @error('golongan') is-invalid @enderror" value="{{ old('golongan', $employee->golongan) }}">
+                                <label for="golongan">Golongan/Jabatan/Unit Kerja</label>
+                                <input type="text" id="golongan" name="golongan" class="form-control @error('golongan') is-invalid @enderror" value="{{ old('golongan', $employee->golongan) }}" placeholder="Contoh: III/a - Kepala Seksi - Puskesmas">
+                                <small class="form-text text-muted">Masukkan golongan, jabatan, dan unit kerja (contoh: III/a - Kepala Seksi - Puskesmas)</small>
                                 @error('golongan')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -112,9 +92,9 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="employee_status">Employee Status</label>
+                                <label for="employee_status">Status Pegawai</label>
                                 <select id="employee_status" name="employee_status" class="form-control select2 @error('employee_status') is-invalid @enderror">
-                                    <option value="">Select Employee Status</option>
+                                    <option value="">Pilih Status Pegawai</option>
                                     <option value="Kontrak" {{ old('employee_status', $employee->employee_status) == 'Kontrak' ? 'selected' : '' }}>Kontrak</option>
                                     <option value="PNS" {{ old('employee_status', $employee->employee_status) == 'PNS' ? 'selected' : '' }}>PNS</option>
                                     <option value="PPPK" {{ old('employee_status', $employee->employee_status) == 'PPPK' ? 'selected' : '' }}>PPPK</option>
@@ -312,7 +292,12 @@
                                                     <option value="SD" {{ old('educations.'.$index.'.level', $education->level) == 'SD' ? 'selected' : '' }}>SD</option>
                                                     <option value="SLTP" {{ old('educations.'.$index.'.level', $education->level) == 'SLTP' ? 'selected' : '' }}>SLTP</option>
                                                     <option value="SLTA" {{ old('educations.'.$index.'.level', $education->level) == 'SLTA' ? 'selected' : '' }}>SLTA</option>
-                                                    <option value="Perguruan Tinggi" {{ old('educations.'.$index.'.level', $education->level) == 'Perguruan Tinggi' ? 'selected' : '' }}>Perguruan Tinggi</option>
+                                                    <option value="Diploma" {{ old('educations.'.$index.'.level', $education->level) == 'Diploma' ? 'selected' : '' }}>Diploma</option>
+                                                    <option value="S1" {{ old('educations.'.$index.'.level', $education->level) == 'S1' ? 'selected' : '' }}>S1</option>
+                                                    <option value="S2" {{ old('educations.'.$index.'.level', $education->level) == 'S2' ? 'selected' : '' }}>S2</option>
+                                                    <option value="S3" {{ old('educations.'.$index.'.level', $education->level) == 'S3' ? 'selected' : '' }}>S3</option>
+                                                    <option value="Spesialis" {{ old('educations.'.$index.'.level', $education->level) == 'Spesialis' ? 'selected' : '' }}>Spesialis</option>
+                                                    <option value="Sub Spesialis" {{ old('educations.'.$index.'.level', $education->level) == 'Sub Spesialis' ? 'selected' : '' }}>Sub Spesialis</option>
                                                 </select>
                                                 @error('educations.'.$index.'.level')
                                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -485,7 +470,12 @@
                                             <option value="SD">SD</option>
                                             <option value="SLTP">SLTP</option>
                                             <option value="SLTA">SLTA</option>
-                                            <option value="Perguruan Tinggi">Perguruan Tinggi</option>
+                                            <option value="Diploma">Diploma</option>
+                                            <option value="S1">S1</option>
+                                            <option value="S2">S2</option>
+                                            <option value="S3">S3</option>
+                                            <option value="Spesialis">Spesialis</option>
+                                            <option value="Sub Spesialis">Sub Spesialis</option>
                                         </select>
                                     </div>
                                 </div>

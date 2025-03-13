@@ -30,7 +30,15 @@ class EducationSeeder extends Seeder
                 'employee_id' => $employee->id,
                 'type' => 'formal',
                 'institution_name' => 'Universitas Indonesia',
-                'level' => 'Perguruan Tinggi',
+                'level' => 'S1',
+                'course_name' => null,
+            ]);
+
+            Education::create([
+                'employee_id' => $employee->id,
+                'type' => 'formal',
+                'institution_name' => 'Institut Teknologi Bandung',
+                'level' => 'S2',
                 'course_name' => null,
             ]);
 
