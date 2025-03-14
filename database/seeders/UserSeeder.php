@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -13,77 +15,54 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = [
-            [
-                'name' => 'Admin User',
-                'nip' => 'admin123',
-                'password' => Hash::make('password'),
-                'role' => 'admin',
-                'is_active' => true,
-                'status' => 'active',
-                'phone' => '081234567890',
-                'department' => 'IT',
-                'position' => 'System Administrator'
-            ],
-            [
-                'name' => 'John Doe',
-                'nip' => '198001012010011001',
-                'password' => Hash::make('password'),
-                'role' => 'user',
-                'is_active' => true,
-                'status' => 'active',
-                'phone' => '081234567890',
-                'department' => 'Puskesmas Kota',
-                'position' => 'Kepala Seksi'
-            ],
-            [
-                'name' => 'Jane Smith',
-                'nip' => '199005202015022002',
-                'password' => Hash::make('password'),
-                'role' => 'user',
-                'is_active' => true,
-                'status' => 'active',
-                'phone' => '081298765432',
-                'department' => 'RSUD Kota',
-                'position' => 'Dokter Umum'
-            ],
-            [
-                'name' => 'Ahmad Rizki',
-                'nip' => '201001012022011001',
-                'password' => Hash::make('password'),
-                'role' => 'user',
-                'is_active' => true,
-                'status' => 'active',
-                'phone' => '081345678901',
-                'department' => 'Dinas Kesehatan',
-                'position' => 'Staff Administrasi'
-            ],
-            [
-                'name' => 'Siti Rahayu',
-                'nip' => '198703152020032001',
-                'password' => Hash::make('password'),
-                'role' => 'user',
-                'is_active' => true,
-                'status' => 'active',
-                'phone' => '081456789012',
-                'department' => 'Puskesmas Desa',
-                'position' => 'Perawat'
-            ],
-            [
-                'name' => 'Budi Santoso',
-                'nip' => '198505052018011002',
-                'password' => Hash::make('password'),
-                'role' => 'hr',
-                'is_active' => true,
-                'status' => 'active',
-                'phone' => '081567890123',
-                'department' => 'Dinas Kesehatan',
-                'position' => 'Kepala Dinas'
-            ],
-        ];
+        // Create admin user
+        User::create([
+            'username' => 'admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+            'permissions' => json_encode(['all']),
+            'is_active' => true,
+            'last_login_at' => now(),
+            'remember_token' => Str::random(10),
+        ]);
 
-        foreach ($users as $user) {
-            User::create($user);
+        // Create manager user
+        User::create([
+            'username' => 'manager',
+            'email' => 'manager@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'manager',
+            'permissions' => json_encode(['view', 'create', 'edit']),
+            'is_active' => true,
+            'last_login_at' => now(),
+            'remember_token' => Str::random(10),
+        ]);
+
+        // Create regular user
+        User::create([
+            'username' => 'user',
+            'email' => 'user@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'user',
+            'permissions' => json_encode(['view']),
+            'is_active' => true,
+            'last_login_at' => now(),
+            'remember_token' => Str::random(10),
+        ]);
+
+        // Create 10 random users
+        for ($i = 1; $i <= 10; $i++) {
+            User::create([
+                'username' => 'user' . $i,
+                'email' => 'user' . $i . '@example.com',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+                'permissions' => json_encode(['view']),
+                'is_active' => rand(0, 1),
+                'last_login_at' => now()->subDays(rand(0, 30)),
+                'remember_token' => Str::random(10),
+            ]);
         }
     }
-} 
+}

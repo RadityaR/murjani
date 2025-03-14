@@ -2,8 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Employee;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Employee;
+use App\Models\User;
+use Faker\Factory as Faker;
 
 class EmployeeSeeder extends Seeder
 {
@@ -12,101 +15,66 @@ class EmployeeSeeder extends Seeder
      */
     public function run(): void
     {
-        $employees = [
-            [
-                'name' => 'John Doe',
-                'ktp_number' => '3175012345678901',
-                'nip' => '198001012010011001',
-                'golongan' => 'III/a - Kepala Seksi - Puskesmas Kota',
-                'employee_status' => 'PNS',
-                'address' => 'Jl. Sudirman No. 123, Jakarta Pusat',
-                'phone' => '081234567890',
-                'date_of_birth' => '1990-01-15',
-                'gender' => 'Laki-Laki',
-                'marital_status' => 'Menikah',
-                'height_cm' => 175,
-                'weight_kg' => 70,
-                'blood_type' => 'O',
-                'religion' => 'Islam',
-                'hobby' => 'Reading, Swimming',
-                'sip' => 'Hidup',
-            ],
-            [
-                'name' => 'Jane Smith',
-                'ktp_number' => '3175023456789012',
-                'nip' => '199005202015022002',
-                'golongan' => 'III/b - Dokter Umum - RSUD Kota',
-                'employee_status' => 'PNS',
-                'address' => 'Jl. Thamrin No. 45, Jakarta Selatan',
-                'phone' => '081298765432',
-                'date_of_birth' => '1992-05-20',
-                'gender' => 'Perempuan',
-                'marital_status' => 'Belum Menikah',
-                'height_cm' => 165,
-                'weight_kg' => 55,
-                'blood_type' => 'A',
-                'religion' => 'Kristen',
-                'hobby' => 'Cooking, Traveling',
-                'sip' => 'Hidup',
-            ],
-            [
-                'name' => 'Ahmad Rizki',
-                'ktp_number' => '3175034567890123',
-                'nip' => '201001012022011001',
-                'golongan' => 'II/a - Staff Administrasi - Dinas Kesehatan',
-                'employee_status' => 'Kontrak',
-                'address' => 'Jl. Gatot Subroto No. 78, Jakarta Timur',
-                'phone' => '081345678901',
-                'date_of_birth' => '1988-09-10',
-                'gender' => 'Laki-Laki',
-                'marital_status' => 'Menikah',
-                'height_cm' => 170,
-                'weight_kg' => 65,
-                'blood_type' => 'B',
-                'religion' => 'Islam',
-                'hobby' => 'Football, Photography',
-                'sip' => 'Tidak Punya',
-            ],
-            [
-                'name' => 'Siti Rahayu',
-                'ktp_number' => '3175045678901234',
-                'nip' => '198703152020032001',
-                'golongan' => 'III/c - Perawat - Puskesmas Desa',
-                'employee_status' => 'PPPK',
-                'address' => 'Jl. Merdeka No. 56, Jakarta Barat',
-                'phone' => '081456789012',
-                'date_of_birth' => '1987-03-15',
-                'gender' => 'Perempuan',
-                'marital_status' => 'Menikah',
-                'height_cm' => 160,
-                'weight_kg' => 52,
-                'blood_type' => 'AB',
-                'religion' => 'Islam',
-                'hobby' => 'Reading, Gardening',
-                'sip' => 'Mati',
-            ],
-            [
-                'name' => 'Budi Santoso',
-                'ktp_number' => '3175056789012345',
-                'nip' => '198505052018011002',
-                'golongan' => 'IV/a - Kepala Dinas - Dinas Kesehatan',
-                'employee_status' => 'PNS',
-                'address' => 'Jl. Pemuda No. 123, Jakarta Utara',
-                'phone' => '081567890123',
-                'date_of_birth' => '1985-05-05',
-                'gender' => 'Laki-Laki',
-                'marital_status' => 'Menikah',
-                'height_cm' => 180,
-                'weight_kg' => 75,
-                'blood_type' => 'O',
-                'religion' => 'Islam',
-                'hobby' => 'Golf, Reading',
-                'sip' => 'Hidup',
-            ],
-        ];
-
-        foreach ($employees as $employee) {
-            Employee::create($employee);
+        $faker = Faker::create('id_ID');
+        
+        // Get existing users
+        $users = User::all();
+        
+        // Create employees for existing users
+        foreach ($users as $index => $user) {
+            // Skip the first 3 users (admin, manager, user)
+            if ($index < 3) {
+                continue;
+            }
+            
+            Employee::create([
+                'user_id' => $user->id,
+                'nip' => $faker->unique()->numerify('19########'),
+                'full_name' => $faker->name,
+                'identity_number' => $faker->unique()->numerify('################'),
+                'position_id' => $faker->numberBetween(7, 23), // Manager and staff positions
+                'department_id' => $faker->numberBetween(1, 13),
+                'unit_id' => $faker->numberBetween(1, 17),
+                'rank_class_id' => $faker->numberBetween(1, 17),
+                'employment_status' => $faker->randomElement(['contract', 'civil_servant', 'temporary']),
+                'license_status' => $faker->randomElement(['active', 'expired', 'none']),
+                'address' => $faker->address,
+                'phone_number' => $faker->phoneNumber,
+                'birth_date' => $faker->dateTimeBetween('-60 years', '-20 years')->format('Y-m-d'),
+                'gender' => $faker->randomElement(['male', 'female']),
+                'marital_status' => $faker->randomElement(['single', 'married', 'widowed', 'divorced']),
+                'height_cm' => $faker->numberBetween(150, 190),
+                'weight_kg' => $faker->numberBetween(45, 100),
+                'blood_type' => $faker->randomElement(['A', 'B', 'AB', 'O']),
+                'religion' => $faker->randomElement(['Islam', 'Christianity', 'Catholicism', 'Hinduism', 'Buddhism', 'Confucianism']),
+                'hobbies' => $faker->randomElement(['Reading', 'Sports', 'Music', 'Traveling', 'Cooking', 'Photography']),
+            ]);
+        }
+        
+        // Create additional employees without user accounts
+        for ($i = 0; $i < 20; $i++) {
+            Employee::create([
+                'user_id' => null,
+                'nip' => $faker->unique()->numerify('20########'),
+                'full_name' => $faker->name,
+                'identity_number' => $faker->unique()->numerify('################'),
+                'position_id' => $faker->numberBetween(7, 23), // Manager and staff positions
+                'department_id' => $faker->numberBetween(1, 13),
+                'unit_id' => $faker->numberBetween(1, 17),
+                'rank_class_id' => $faker->numberBetween(1, 17),
+                'employment_status' => $faker->randomElement(['contract', 'civil_servant', 'temporary']),
+                'license_status' => $faker->randomElement(['active', 'expired', 'none']),
+                'address' => $faker->address,
+                'phone_number' => $faker->phoneNumber,
+                'birth_date' => $faker->dateTimeBetween('-60 years', '-20 years')->format('Y-m-d'),
+                'gender' => $faker->randomElement(['male', 'female']),
+                'marital_status' => $faker->randomElement(['single', 'married', 'widowed', 'divorced']),
+                'height_cm' => $faker->numberBetween(150, 190),
+                'weight_kg' => $faker->numberBetween(45, 100),
+                'blood_type' => $faker->randomElement(['A', 'B', 'AB', 'O']),
+                'religion' => $faker->randomElement(['Islam', 'Christianity', 'Catholicism', 'Hinduism', 'Buddhism', 'Confucianism']),
+                'hobbies' => $faker->randomElement(['Reading', 'Sports', 'Music', 'Traveling', 'Cooking', 'Photography']),
+            ]);
         }
     }
-} 
+}

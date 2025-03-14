@@ -17,10 +17,11 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -28,23 +29,13 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
-        'nip',
         'password',
         'role',
-        'is_active',
-        'status',
-        'notes',
         'permissions',
-        'phone',
-        'department',
-        'position',
-        'employee_status',
-        'golongan_pangkat',
-        'jabatan',
-        'unit_kerja',
-        'address'
+        'is_active',
+        'last_login_at',
     ];
 
     /**
@@ -54,7 +45,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'permissions'
+        'remember_token',
     ];
 
     /**
@@ -63,22 +54,65 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'password' => 'hashed',
         'email_verified_at' => 'datetime',
-        'role' => 'string',
+        'password' => 'hashed',
+        'permissions' => 'json',
         'is_active' => 'boolean',
         'last_login_at' => 'datetime',
-        'permissions' => 'json'
     ];
 
     /**
-     * Check if the user is an admin
-     *
-     * @return bool
+     * Get the employee associated with the user.
+     */
+    public function employee(): HasOne
+    {
+        return $this->hasOne(Employee::class);
+    }
+
+    /**
+     * Get the documents uploaded by the user.
+     */
+    public function uploadedDocuments(): HasMany
+    {
+        return $this->hasMany(Document::class, 'uploaded_by');
+    }
+
+    /**
+     * Get the documents reviewed by the user.
+     */
+    public function reviewedDocuments(): HasMany
+    {
+        return $this->hasMany(Document::class, 'reviewed_by');
+    }
+
+    /**
+     * Check if the user has a specific permission.
+     */
+    public function hasPermission(string $permission): bool
+    {
+        if ($this->role === 'admin') {
+            return true;
+        }
+
+        $permissions = $this->permissions ?? [];
+        
+        return in_array($permission, $permissions) || in_array('all', $permissions);
+    }
+
+    /**
+     * Check if the user is an admin.
      */
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * Check if the user is a manager.
+     */
+    public function isManager(): bool
+    {
+        return $this->role === 'manager';
     }
 
     /**
@@ -96,18 +130,6 @@ class User extends Authenticatable
     {
         $this->last_login_at = now();
         $this->save();
-    }
-
-    /**
-     * Check if user has specific permission
-     */
-    public function hasPermission(string $permission): bool
-    {
-        if ($this->isAdmin()) {
-            return true;
-        }
-        
-        return in_array($permission, $this->permissions ?? []);
     }
 
     /**
@@ -134,13 +156,5 @@ class User extends Authenticatable
             'id', // Local key on users table
             'id' // Local key on employees table
         );
-    }
-
-    /**
-     * Get the user's employee record.
-     */
-    public function employee(): HasOne
-    {
-        return $this->hasOne(Employee::class);
     }
 }

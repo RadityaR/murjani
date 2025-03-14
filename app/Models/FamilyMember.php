@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class WorkExperience extends Model
+class FamilyMember extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -18,18 +18,18 @@ class WorkExperience extends Model
      */
     protected $fillable = [
         'employee_id',
-        'company_name',
-        'position',
-        'department',
-        'location',
-        'employment_type',
-        'start_date',
-        'end_date',
-        'is_current',
-        'responsibilities',
-        'achievements',
-        'reference_name',
-        'reference_contact',
+        'full_name',
+        'relationship',
+        'identity_number',
+        'birth_date',
+        'gender',
+        'occupation',
+        'education_level',
+        'is_dependent',
+        'is_emergency_contact',
+        'phone_number',
+        'address',
+        'notes',
     ];
 
     /**
@@ -38,13 +38,13 @@ class WorkExperience extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'is_current' => 'boolean',
+        'birth_date' => 'date',
+        'is_dependent' => 'boolean',
+        'is_emergency_contact' => 'boolean',
     ];
 
     /**
-     * Get the employee that owns the work experience.
+     * Get the employee that owns the family member.
      */
     public function employee(): BelongsTo
     {

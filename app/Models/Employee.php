@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Employee extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    protected $table = 'employees';
     /**
      * The attributes that are mass assignable.
      *
@@ -19,26 +20,25 @@ class Employee extends Model
      */
     protected $fillable = [
         'user_id',
-        'name',
-        'ktp_number',
         'nip',
-        'golongan_pangkat',
-        'jabatan',
-        'unit_kerja',
-        'employee_status',
+        'full_name',
+        'identity_number',
+        'position_id',
+        'department_id',
+        'unit_id',
+        'rank_class_id',
+        'employment_status',
+        'license_status',
         'address',
-        'phone',
-        'email',
-        'date_of_birth',
+        'phone_number',
+        'birth_date',
         'gender',
         'marital_status',
         'height_cm',
         'weight_kg',
         'blood_type',
         'religion',
-        'hobby',
-        'sip',
-        'employee_document',
+        'hobbies',
     ];
 
     /**
@@ -47,8 +47,50 @@ class Employee extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'date_of_birth' => 'date',
+        'birth_date' => 'date',
+        'height_cm' => 'integer',
+        'weight_kg' => 'integer',
     ];
+
+    /**
+     * Get the user that owns the employee.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the position that owns the employee.
+     */
+    public function position(): BelongsTo
+    {
+        return $this->belongsTo(Position::class);
+    }
+
+    /**
+     * Get the department that owns the employee.
+     */
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    /**
+     * Get the unit that owns the employee.
+     */
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
+    /**
+     * Get the rank class that owns the employee.
+     */
+    public function rankClass(): BelongsTo
+    {
+        return $this->belongsTo(RankClass::class);
+    }
 
     /**
      * Get the educations for the employee.
@@ -67,10 +109,28 @@ class Employee extends Model
     }
 
     /**
-     * Get the user that owns the employee.
+     * Get the documents for the employee.
      */
-    public function user(): BelongsTo
+    public function documents(): HasMany
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(Document::class);
+    }
+
+    /**
+     * Get the family members for the employee.
+     */
+    public function familyMembers(): HasMany
+    {
+        return $this->hasMany(FamilyMember::class);
+    }
+
+    /**
+     * The skills that belong to the employee.
+     */
+    public function skills(): BelongsToMany
+    {
+        return $this->belongsToMany(Skill::class)
+            ->withPivot('proficiency_level', 'notes', 'acquired_date', 'last_used_date')
+            ->withTimestamps();
     }
 } 
