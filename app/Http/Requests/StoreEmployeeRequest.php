@@ -23,52 +23,95 @@ class StoreEmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'ktp_number' => ['nullable', 'string', 'max:20'],
+            // Basic employee information
+            'user_id' => ['nullable', 'exists:users,id'],
             'nip' => ['nullable', 'string', 'max:20'],
-            'golongan_pangkat' => ['nullable', 'string', 'max:50'],
-            'jabatan' => ['nullable', 'string', 'max:100'],
-            'unit_kerja' => ['nullable', 'string', 'max:100'],
-            'employee_status' => ['nullable', Rule::in(['Kontrak', 'PNS', 'PPPK'])],
+            'full_name' => ['required', 'string', 'max:255'],
+            'identity_number' => ['nullable', 'string', 'max:20'],
+            'position_id' => ['required', 'exists:positions,id'],
+            'department_id' => ['required', 'exists:departments,id'],
+            'unit_id' => ['required', 'exists:units,id'],
+            'rank_class_id' => ['nullable', 'exists:rank_classes,id'],
+            'employment_status' => ['required', Rule::in(['Kontrak', 'PNS', 'PPPK'])],
+            'license_status' => ['nullable', 'string', 'max:50'],
             'address' => ['required', 'string'],
-            'phone' => ['required', 'string', 'max:20'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:employees'],
-            'date_of_birth' => ['required', 'date', 'before:today'],
+            'phone_number' => ['required', 'string', 'max:20'],
+            'birth_date' => ['required', 'date', 'before:today'],
             'gender' => ['required', Rule::in(['Laki-Laki', 'Perempuan'])],
             'marital_status' => ['required', Rule::in(['Belum Menikah', 'Menikah', 'Duda', 'Janda'])],
             'height_cm' => ['required', 'integer', 'min:1', 'max:300'],
             'weight_kg' => ['required', 'integer', 'min:1', 'max:500'],
             'blood_type' => ['required', Rule::in(['A', 'B', 'AB', 'O'])],
             'religion' => ['required', 'string', 'max:50'],
-            'hobby' => ['required', 'string', 'max:255'],
-            'employee_document' => ['nullable', 'file', 'mimes:doc,docx', 'max:5120'], // Max 5MB
-            // Education validation
+            'hobbies' => ['nullable', 'string', 'max:255'],
+            
+            // Education information
             'educations' => ['nullable', 'array'],
-            'educations.*.type' => ['required', 'string', Rule::in(['formal', 'informal'])],
+            'educations.*.education_type' => ['required', 'string', Rule::in(['formal', 'informal'])],
             'educations.*.institution_name' => ['required', 'string', 'max:255'],
-            'educations.*.level' => [
+            'educations.*.education_level' => [
                 'nullable',
                 Rule::requiredIf(function () {
-                    return collect($this->input('educations', []))->contains('type', 'formal');
+                    return collect($this->input('educations', []))->contains('education_type', 'formal');
                 }),
                 Rule::in(['SD', 'SLTP', 'SLTA', 'Diploma', 'S1', 'S2', 'S3', 'Spesialis', 'Sub Spesialis']),
             ],
-            'educations.*.course_name' => [
-                'nullable',
-                Rule::requiredIf(function () {
-                    return collect($this->input('educations', []))->contains('type', 'informal');
-                }),
-                'string',
-                'max:255',
+            'educations.*.major' => ['nullable', 'string', 'max:255'],
+            'educations.*.degree' => ['nullable', 'string', 'max:100'],
+            'educations.*.start_year' => ['nullable', 'integer', 'min:1900', 'max:' . date('Y')],
+            'educations.*.graduation_year' => [
+                'nullable', 
+                'integer', 
+                'min:1900', 
+                'max:' . (date('Y') + 10),
+                'gte:educations.*.start_year'
             ],
+            'educations.*.gpa' => ['nullable', 'numeric', 'min:0', 'max:4.0'],
+            'educations.*.certificate_number' => ['nullable', 'string', 'max:100'],
             
-            // Work Experience validation
+            // Work Experience information
             'work_experiences' => ['nullable', 'array'],
-            'work_experiences.*.company' => ['required', 'string', 'max:255'],
-            'work_experiences.*.position' => ['nullable', 'string', 'max:255'],
-            'work_experiences.*.start_date' => ['nullable', 'date'],
+            'work_experiences.*.company_name' => ['required', 'string', 'max:255'],
+            'work_experiences.*.position' => ['required', 'string', 'max:255'],
+            'work_experiences.*.department' => ['nullable', 'string', 'max:255'],
+            'work_experiences.*.location' => ['nullable', 'string', 'max:255'],
+            'work_experiences.*.employment_type' => ['nullable', 'string', 'max:100'],
+            'work_experiences.*.start_date' => ['required', 'date'],
             'work_experiences.*.end_date' => ['nullable', 'date', 'after_or_equal:work_experiences.*.start_date'],
-            'work_experiences.*.description' => ['nullable', 'string'],
+            'work_experiences.*.is_current' => ['boolean'],
+            'work_experiences.*.responsibilities' => ['nullable', 'string'],
+            'work_experiences.*.achievements' => ['nullable', 'string'],
+            'work_experiences.*.reference_name' => ['nullable', 'string', 'max:255'],
+            'work_experiences.*.reference_contact' => ['nullable', 'string', 'max:100'],
+            
+            // Family Members information
+            'family_members' => ['nullable', 'array'],
+            'family_members.*.full_name' => ['required', 'string', 'max:255'],
+            'family_members.*.relationship' => ['required', 'string', 'max:50'],
+            'family_members.*.identity_number' => ['nullable', 'string', 'max:50'],
+            'family_members.*.birth_date' => ['required', 'date'],
+            'family_members.*.gender' => ['required', Rule::in(['Laki-Laki', 'Perempuan'])],
+            'family_members.*.occupation' => ['nullable', 'string', 'max:100'],
+            'family_members.*.education_level' => ['nullable', 'string', 'max:50'],
+            'family_members.*.is_dependent' => ['boolean'],
+            'family_members.*.is_emergency_contact' => ['boolean'],
+            'family_members.*.phone_number' => ['nullable', 'string', 'max:20'],
+            'family_members.*.address' => ['nullable', 'string'],
+            'family_members.*.notes' => ['nullable', 'string'],
+            
+            // Skills information
+            'skills' => ['nullable', 'array'],
+            'skills.*.skill_id' => ['required', 'exists:skills,id'],
+            'skills.*.proficiency_level' => ['required', 'integer', 'min:1', 'max:5'],
+            'skills.*.notes' => ['nullable', 'string'],
+            'skills.*.acquired_date' => ['nullable', 'date'],
+            'skills.*.last_used_date' => ['nullable', 'date'],
+            
+            // Documents
+            'documents' => ['nullable', 'array'],
+            'documents.*.file' => ['required', 'file', 'max:10240'], // 10MB max
+            'documents.*.document_type' => ['required', 'string', 'max:50'],
+            'documents.*.description' => ['nullable', 'string'],
         ];
     }
 } 
