@@ -6,6 +6,7 @@ use App\Http\Controllers\ExampleController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\FileUploadController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -64,7 +65,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
 
     // Admin only routes
-    Route::middleware(['admin'])->group(function () {
+    Route::middleware('admin')->group(function () {
         // User management
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -72,6 +73,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        
+        // File validation routes
+        Route::get('/files', [FileUploadController::class, 'index'])->name('files.index');
+        Route::put('/files/{file}/validate', [FileUploadController::class, 'validateFile'])->name('files.validate');
+        Route::delete('/files/{file}', [FileUploadController::class, 'destroy'])->name('files.destroy');
     });
 
     // Superadmin routes
@@ -105,4 +111,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/users/bulk-action', [UserController::class, 'bulkAction'])->name('users.bulk-action');
     Route::get('/users/filter', [UserController::class, 'filter'])->name('users.filter');
     Route::resource('users', UserController::class);
+
+    // File Upload routes
+    Route::post('/files/upload', [FileUploadController::class, 'store'])->name('files.upload');
+    Route::get('/files/download/{file}', [FileUploadController::class, 'download'])->name('files.download');
 });

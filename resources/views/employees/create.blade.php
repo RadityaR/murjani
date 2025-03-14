@@ -101,16 +101,38 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
-                                <label for="golongan">Golongan/Jabatan/Unit Kerja</label>
-                                <input type="text" id="golongan" name="golongan" class="form-control @error('golongan') is-invalid @enderror" value="{{ old('golongan') }}" placeholder="Contoh: III/a - Kepala Seksi - Puskesmas">
-                                <small class="form-text text-muted">Masukkan golongan, jabatan, dan unit kerja (contoh: III/a - Kepala Seksi - Puskesmas)</small>
-                                @error('golongan')
+                                <label for="golongan_pangkat">Golongan/Pangkat</label>
+                                <input type="text" id="golongan_pangkat" name="golongan_pangkat" class="form-control @error('golongan_pangkat') is-invalid @enderror" value="{{ old('golongan_pangkat') }}" placeholder="Contoh: III/a">
+                                <small class="form-text text-muted">Masukkan golongan/pangkat (contoh: III/a)</small>
+                                @error('golongan_pangkat')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="jabatan">Jabatan</label>
+                                <input type="text" id="jabatan" name="jabatan" class="form-control @error('jabatan') is-invalid @enderror" value="{{ old('jabatan') }}" placeholder="Contoh: Kepala Seksi">
+                                <small class="form-text text-muted">Masukkan jabatan (contoh: Kepala Seksi)</small>
+                                @error('jabatan')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="unit_kerja">Unit Kerja</label>
+                                <input type="text" id="unit_kerja" name="unit_kerja" class="form-control @error('unit_kerja') is-invalid @enderror" value="{{ old('unit_kerja') }}" placeholder="Contoh: Puskesmas">
+                                <small class="form-text text-muted">Masukkan unit kerja (contoh: Puskesmas)</small>
+                                @error('unit_kerja')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="employee_status">Status Pegawai</label>
@@ -125,9 +147,6 @@
                                 @enderror
                             </div>
                         </div>
-                    </div>
-              
-                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="phone">Telepon <span class="text-danger">*</span></label>
@@ -137,6 +156,8 @@
                                 @enderror
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="date_of_birth">Tanggal Lahir <span class="text-danger">*</span></label>
@@ -146,8 +167,6 @@
                                 @enderror
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="gender">Jenis Kelamin <span class="text-danger">*</span></label>
@@ -161,6 +180,8 @@
                                 @enderror
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="marital_status">Status Pernikahan <span class="text-danger">*</span></label>

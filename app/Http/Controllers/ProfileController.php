@@ -17,32 +17,7 @@ class ProfileController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . Auth::id(),
-            'phone' => 'required|string|max:20',
-            'department' => 'nullable|string|max:100',
-            'position' => 'nullable|string|max:100',
-            'employee_status' => 'nullable|string|in:Kontrak,PNS,PPPK',
-            'golongan' => 'nullable|string|max:100',
-            'address' => 'nullable|string|max:500',
-            'educations' => 'nullable|array',
-            'educations.*.id' => 'nullable|exists:educations,id',
-            'educations.*.type' => 'required|in:formal,informal',
-            'educations.*.institution_name' => 'required|string|max:255',
-            'educations.*.course_name' => 'required_if:educations.*.type,informal|nullable|string|max:255',
-            'educations.*.start_date' => 'nullable|date',
-            'educations.*.end_date' => 'nullable|date|after_or_equal:educations.*.start_date',
-            'educations.*.description' => 'nullable|string',
-            'educations.*.level' => [
-                'nullable',
-                Rule::requiredIf(fn ($attribute, $value, $fail) => {
-                    $index = explode('.', $attribute)[1];
-                    return isset($this->educations[$index]['type']) && $this->educations[$index]['type'] === 'formal';
-                }),
-                Rule::in(['SD', 'SLTP', 'SLTA', 'Diploma', 'S1', 'S2', 'S3', 'Spesialis', 'Sub Spesialis']),
-            ],
-        ]);
+       
 
         try {
             DB::beginTransaction();
@@ -56,7 +31,9 @@ class ProfileController extends Controller
             $user->department = $request->input('department');
             $user->position = $request->input('position');
             $user->employee_status = $request->input('employee_status');
-            $user->golongan = $request->input('golongan');
+            $user->golongan_pangkat = $request->input('golongan_pangkat');
+            $user->jabatan = $request->input('jabatan');
+            $user->unit_kerja = $request->input('unit_kerja');
             $user->address = $request->input('address');
             $user->save();
 
@@ -66,7 +43,9 @@ class ProfileController extends Controller
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'employee_status' => $user->employee_status,
-                'golongan' => $user->golongan,
+                'golongan_pangkat' => $user->golongan_pangkat,
+                'jabatan' => $user->jabatan,
+                'unit_kerja' => $user->unit_kerja,
                 'address' => $user->address,
             ]);
 
@@ -112,6 +91,13 @@ class ProfileController extends Controller
         $request->validate([
             'current_password' => ['required', 'string'],
             'new_password' => ['required', 'string', 'min:8', 'confirmed'],
+            'educations.*.level' => [
+                'nullable',
+                Rule::requiredIf(fn ($attribute) => 
+                    request()->input("educations.".explode('.', $attribute)[1].".type") === 'formal'
+                ),
+                Rule::in(['SD', 'SLTP', 'SLTA', 'Diploma', 'S1', 'S2', 'S3', 'Spesialis', 'Sub Spesialis']),
+            ],
         ]);
 
         $user = Auth::user();

@@ -12,6 +12,22 @@
             <li class="{{ Request::is('home') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ url('home') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
+
+            <!-- File Upload Menu -->
+            <li class="menu-header">Berkas</li>
+            <li>
+                <a href="#" data-toggle="modal" data-target="#uploadModal">
+                    <i class="fas fa-upload"></i> <span>Upload Berkas</span>
+                </a>
+            </li>
+            @if (Auth::user()->role == 'admin')
+            <li class="{{ Request::is('files*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('files.index') }}">
+                    <i class="fas fa-file-alt"></i> <span>Validasi Berkas</span>
+                </a>
+            </li>
+            @endif
+
             @if (Auth::user()->role == 'superadmin')
             <li class="menu-header">Hak Akses</li>
             <li class="{{ Request::is('hakakses') ? 'active' : '' }}">
@@ -79,5 +95,22 @@
             </li>
         </ul>
     </aside>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Upload Berkas</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <x-file-upload-form />
+            </div>
+        </div>
+    </div>
 </div>
 @endauth

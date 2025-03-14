@@ -41,7 +41,9 @@ class User extends Authenticatable
         'department',
         'position',
         'employee_status',
-        'golongan',
+        'golongan_pangkat',
+        'jabatan',
+        'unit_kerja',
         'address'
     ];
 

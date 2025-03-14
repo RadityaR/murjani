@@ -63,8 +63,16 @@
                                         <td>{{ $employee->nip ?? '-' }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Golongan</th>
-                                        <td>{{ $employee->golongan ?? '-' }}</td>
+                                        <th>Golongan/Pangkat</th>
+                                        <td>{{ $employee->golongan_pangkat ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Jabatan</th>
+                                        <td>{{ $employee->jabatan ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Unit Kerja</th>
+                                        <td>{{ $employee->unit_kerja ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Status Pegawai</th>
