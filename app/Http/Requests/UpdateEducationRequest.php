@@ -24,19 +24,25 @@ class UpdateEducationRequest extends FormRequest
     {
         return [
             'employee_id' => ['sometimes', 'required', 'exists:employees,id'],
-            'type' => ['sometimes', 'required', Rule::in(['formal', 'informal'])],
+            'education_type' => ['sometimes', 'required', Rule::in(['formal', 'informal', 'certification'])],
             'institution_name' => ['sometimes', 'required', 'string', 'max:255'],
-            'level' => [
+            'education_level' => [
                 'nullable',
-                Rule::requiredIf(fn () => $this->type === 'formal'),
-                Rule::in(['SD', 'SLTP', 'SLTA', 'Diploma', 'S1', 'S2', 'S3', 'Spesialis', 'Sub Spesialis']),
+                Rule::requiredIf(fn () => $this->input('education_type') === 'formal'),
+                Rule::in(['elementary', 'junior_high', 'high_school', 'diploma', 'bachelor', 'master', 'doctorate', 'specialist', 'sub_specialist']),
             ],
-            'course_name' => [
-                'nullable',
-                Rule::requiredIf(fn () => $this->type === 'informal'),
-                'string',
-                'max:255',
+            'major' => ['nullable', 'string', 'max:255'],
+            'degree' => ['nullable', 'string', 'max:100'],
+            'start_year' => ['nullable', 'integer', 'min:1900', 'max:' . date('Y')],
+            'graduation_year' => [
+                'nullable', 
+                'integer', 
+                'min:1900', 
+                'max:' . (date('Y') + 10),
+                'gte:start_year'
             ],
+            'gpa' => ['nullable', 'numeric', 'min:0', 'max:4.0'],
+            'certificate_number' => ['nullable', 'string', 'max:100'],
         ];
     }
 } 

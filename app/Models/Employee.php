@@ -50,6 +50,11 @@ class Employee extends Model
         'birth_date' => 'date',
         'height_cm' => 'integer',
         'weight_kg' => 'integer',
+        'employment_status' => 'string',
+        'license_status' => 'string',
+        'gender' => 'string',
+        'marital_status' => 'string',
+        'blood_type' => 'string',
     ];
 
     /**

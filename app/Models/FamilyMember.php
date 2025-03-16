@@ -41,6 +41,8 @@ class FamilyMember extends Model
         'birth_date' => 'date',
         'is_dependent' => 'boolean',
         'is_emergency_contact' => 'boolean',
+        'gender' => 'string',
+        'relationship' => 'string',
     ];
 
     /**

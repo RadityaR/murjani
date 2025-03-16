@@ -45,6 +45,8 @@ class Education extends Model
         'start_year' => 'integer',
         'graduation_year' => 'integer',
         'gpa' => 'decimal:2',
+        'education_type' => 'string',
+        'education_level' => 'string',
     ];
 
     /**

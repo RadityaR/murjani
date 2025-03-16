@@ -25,10 +25,10 @@ class StoreFamilyMemberRequest extends FormRequest
         return [
             'employee_id' => ['required', 'exists:employees,id'],
             'full_name' => ['required', 'string', 'max:255'],
-            'relationship' => ['required', 'string', 'max:50'],
+            'relationship' => ['required', Rule::in(['spouse', 'child', 'parent', 'sibling', 'other'])],
             'identity_number' => ['nullable', 'string', 'max:50'],
             'birth_date' => ['required', 'date'],
-            'gender' => ['required', Rule::in(['Laki-Laki', 'Perempuan'])],
+            'gender' => ['required', Rule::in(['male', 'female'])],
             'occupation' => ['nullable', 'string', 'max:100'],
             'education_level' => ['nullable', 'string', 'max:50'],
             'is_dependent' => ['boolean'],
