@@ -6,6 +6,8 @@
     <!-- CSS Libraries -->
     <link rel="stylesheet" href="{{ asset('library/datatables/media/css/jquery.dataTables.min.css') }}">
     <link rel="stylesheet" href="{{ asset('library/select2/dist/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('library/jqvmap/dist/jqvmap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('library/summernote/dist/summernote-bs4.min.css') }}">
 @endpush
 
 @section('content')
@@ -14,6 +16,28 @@
         <div class="section-header">
             <h1>Dashboard</h1>
         </div>
+
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible show fade">
+                <div class="alert-body">
+                    <button class="close" data-dismiss="alert">
+                        <span>×</span>
+                    </button>
+                    {{ session('success') }}
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible show fade">
+                <div class="alert-body">
+                    <button class="close" data-dismiss="alert">
+                        <span>×</span>
+                    </button>
+                    {{ session('error') }}
+                </div>
+            </div>
+        @endif
 
         <div class="section-body">
             @if(auth()->user()->role === 'admin')
@@ -90,61 +114,32 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="golongan-filter">Filter Golongan/Jabatan/Unit Kerja:</label>
-                                        <select class="form-control select2" id="golongan-filter">
-                                            <option value="">Semua</option>
-                                            @php
-                                                $golongan = \App\Models\Employee::distinct('golongan')->pluck('golongan');
-                                            @endphp
-                                            @foreach($golongan as $gol)
-                                                <option value="{{ $gol }}">{{ $gol }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="search-name">Cari Nama:</label>
-                                        <input type="text" class="form-control" id="search-name" placeholder="Ketik nama pegawai...">
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>&nbsp;</label>
-                                        <button class="btn btn-primary btn-block" id="reset-filters">
-                                            <i class="fas fa-sync-alt"></i> Reset Filter
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="table-responsive">
-                                <table class="table table-striped" id="employees-table">
+                                <table class="table table-striped" id="employee-table">
                                     <thead>
                                         <tr>
                                             <th>NIP</th>
                                             <th>Nama</th>
-                                            <th>Golongan/Jabatan/Unit Kerja</th>
-                                            <th>Status</th>
+                                            <th>Golongan</th>
+                                            <th>Jabatan</th>
+                                            <th>Unit Kerja</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach(\App\Models\Employee::latest()->take(5)->get() as $employee)
+                                        @php
+                                            $latestEmployees = \App\Models\Employee::latest()->take(5)->get();
+                                        @endphp
+                                        @foreach($latestEmployees as $employee)
                                         <tr>
                                             <td>{{ $employee->nip }}</td>
-                                            <td>{{ $employee->name }}</td>
+                                            <td>{{ $employee->nama }}</td>
                                             <td>{{ $employee->golongan }}</td>
-                                            <td>
-                                                <div class="badge badge-{{ $employee->employee_status == 'PNS' ? 'info' : ($employee->employee_status == 'Kontrak' ? 'warning' : 'light') }}">
-                                                    {{ $employee->employee_status }}
-                                                </div>
-                                            </td>
+                                            <td>{{ $employee->jabatan }}</td>
+                                            <td>{{ $employee->unit_kerja }}</td>
                                             <td>
                                                 <a href="{{ route('employees.show', $employee) }}" class="btn btn-info btn-sm">
-                                                    <i class="fas fa-eye"></i>
+                                                    <i class="fas fa-eye"></i> Detail
                                                 </a>
                                             </td>
                                         </tr>
@@ -161,97 +156,94 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Data Pegawai Saya</h4>
+                            <h4>Informasi Pegawai</h4>
                         </div>
                         <div class="card-body">
                             @if($employee)
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <table class="table table-bordered">
-                                            <tr>
-                                                <th width="30%">Nama</th>
-                                                <td>{{ $employee->name }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>NIP</th>
-                                                <td>{{ $employee->nip ?? '-' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Golongan/Jabatan/Unit Kerja</th>
-                                                <td>{{ $employee->golongan ?? '-' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Status Pegawai</th>
-                                                <td>{{ $employee->employee_status ?? '-' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Email</th>
-                                                <td>{{ $employee->email }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Telepon</th>
-                                                <td>{{ $employee->phone }}</td>
-                                            </tr>
-                                        </table>
+                                    <div class="col-md-4 text-center">
+                                        <div class="mb-3">
+                                            <img src="{{ $employee->photo ? asset('storage/employee-photos/'.$employee->photo) : asset('img/avatar/avatar-1.png') }}" 
+                                                alt="Profile Photo" class="rounded-circle" width="150" height="150">
+                                        </div>
+                                        <h4>{{ $employee->nama }}</h4>
+                                        <p class="text-muted">{{ $employee->nip }}</p>
+                                        <p class="badge badge-primary">{{ $employee->jabatan }}</p>
                                     </div>
-                                    <div class="col-md-6">
-                                        <table class="table table-bordered">
-                                            <tr>
-                                                <th width="30%">Tanggal Lahir</th>
-                                                <td>{{ $employee->date_of_birth->format('d F Y') }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Jenis Kelamin</th>
-                                                <td>{{ $employee->gender }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Status Pernikahan</th>
-                                                <td>{{ $employee->marital_status }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Agama</th>
-                                                <td>{{ $employee->religion }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Golongan Darah</th>
-                                                <td>{{ $employee->blood_type }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Tinggi Badan</th>
-                                                <td>{{ $employee->height_cm }} cm</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Berat Badan</th>
-                                                <td>{{ $employee->weight_kg }} kg</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Hobi</th>
-                                                <td>{{ $employee->hobby }}</td>
-                                            </tr>
-                                        </table>
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Golongan/Pangkat</label>
+                                                    <p class="form-control-static">{{ $employee->golongan ?: '-' }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Unit Kerja</label>
+                                                    <p class="form-control-static">{{ $employee->unit_kerja ?: '-' }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Email</label>
+                                                    <p class="form-control-static">{{ $employee->email ?: '-' }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Telepon</label>
+                                                    <p class="form-control-static">{{ $employee->telepon ?: '-' }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Alamat</label>
+                                                    <p class="form-control-static">{{ $employee->alamat ?: '-' }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Dokumen</label>
+                                                    <p class="form-control-static">
+                                                        @if($employee->employee_document)
+                                                            <a href="{{ asset('storage/employee-documents/'.$employee->employee_document) }}" 
+                                                               target="_blank" class="btn btn-sm btn-info">
+                                                                <i class="fas fa-file-download"></i> Download Dokumen
+                                                            </a>
+                                                        @else
+                                                            <span class="text-muted">Belum ada dokumen</span>
+                                                        @endif
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-12">
+                                                <a href="{{ route('employees.edit', $employee) }}" class="btn btn-primary">
+                                                    <i class="fas fa-edit"></i> Edit Profil
+                                                </a>
+                                                <a href="{{ route('employees.upload-document', $employee) }}" class="btn btn-warning">
+                                                    <i class="fas fa-file-upload"></i> Upload Dokumen
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                @if($employee->employee_document)
-                                    <div class="mt-4">
-                                        <h5>Dokumen Pegawai</h5>
-                                        <a href="{{ asset('storage/employee-documents/' . $employee->employee_document) }}" class="btn btn-info" target="_blank">
-                                            <i class="fas fa-file-alt"></i> Lihat Dokumen
-                                        </a>
-                                    </div>
-                                @endif
                             @else
                                 <div class="empty-state" data-height="400">
-                                    <div class="empty-state-icon bg-warning">
-                                        <i class="fas fa-user-plus"></i>
+                                    <div class="empty-state-icon">
+                                        <i class="fas fa-question"></i>
                                     </div>
-                                    <h2>Data Pegawai Belum Tersedia</h2>
+                                    <h2>Anda belum memiliki data pegawai</h2>
                                     <p class="lead">
-                                        Data pegawai Anda belum terdaftar dalam sistem.
-                                        Silakan tambahkan data Anda menggunakan tombol di bawah ini.
+                                        Silakan lengkapi data pegawai Anda terlebih dahulu untuk mengakses fitur lainnya.
                                     </p>
-                                    <a href="{{ route('employees.create') }}" class="btn btn-warning mt-4">
-                                        <i class="fas fa-plus"></i> Tambah Data Pegawai
-                                    </a>
+                                    <a href="{{ route('employees.create') }}" class="btn btn-primary mt-4">Lengkapi Data Pegawai</a>
                                 </div>
                             @endif
                         </div>
@@ -259,6 +251,27 @@
                 </div>
             </div>
             @endif
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Pengumuman Terbaru</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <h5><i class="fas fa-info-circle"></i> Informasi Sistem</h5>
+                                <p>Selamat datang di Sistem Informasi Kepegawaian. Sistem ini digunakan untuk mengelola data pegawai dan informasi terkait.</p>
+                            </div>
+                            
+                            <div class="alert alert-warning">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Pengumuman Penting</h5>
+                                <p>Mohon untuk selalu memperbarui data pegawai Anda secara berkala untuk memastikan informasi yang akurat.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </div>
@@ -267,44 +280,19 @@
 @push('scripts')
     <!-- JS Libraries -->
     <script src="{{ asset('library/datatables/media/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('library/jquery-ui-dist/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('library/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('library/summernote/dist/summernote-bs4.min.js') }}"></script>
+    
+    <!-- Page Specific JS File -->
     <script>
         $(document).ready(function() {
-            // Initialize Select2
-            $('.select2').select2();
-
-            // Initialize DataTable
-            var table = $('#employees-table').DataTable({
-                pageLength: 5,
-                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-                ordering: true,
-                order: [[0, 'desc']],
-                dom: 'lrtip' // Removes default search box
-            });
-
-            // Custom filtering function for golongan
-            $('#golongan-filter').on('change', function() {
-                table.column(2) // Golongan column
-                    .search(this.value)
-                    .draw();
-            });
-
-            // Custom filtering function for name search
-            $('#search-name').on('keyup', function() {
-                table.column(1) // Nama column
-                    .search(this.value)
-                    .draw();
-            });
-
-            // Reset all filters
-            $('#reset-filters').on('click', function() {
-                $('#golongan-filter').val('').trigger('change');
-                $('#search-name').val('');
-                table
-                    .search('')
-                    .columns()
-                    .search('')
-                    .draw();
+            // Initialize DataTable for employee table
+            $('#employee-table').DataTable({
+                "paging": false,
+                "ordering": true,
+                "info": false,
+                "searching": false
             });
         });
     </script>
