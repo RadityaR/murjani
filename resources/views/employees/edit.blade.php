@@ -64,8 +64,7 @@
                                        id="nip" 
                                        name="nip" 
                                        class="form-control @error('nip') is-invalid @enderror" 
-                                       value="{{ old('nip', $employee->nip) }}"
-                                       {{ auth()->user()->role !== 'admin' ? 'readonly' : '' }}>
+                                       value="{{ old('nip', $employee->nip) }}">
                                 @error('nip')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -185,12 +184,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="position_id">Jabatan <span class="text-danger">*</span></label>
+                                <label for="position_id">Profesi <span class="text-danger">*</span></label>
                                 <select class="form-control select2 @error('position_id') is-invalid @enderror" name="position_id" required>
-                                    <option value="">-- Pilih Jabatan --</option>
-                                    @foreach(\App\Models\Position::orderBy('name')->get() as $position)
+                                    <option value="">-- Pilih Profesi --</option>
+                                    @foreach(\App\Models\Position::orderBy('title')->get() as $position)
                                         <option value="{{ $position->id }}" {{ old('position_id', $employee->position_id) == $position->id ? 'selected' : '' }}>
-                                            {{ $position->name }}
+                                            {{ $position->title }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -347,12 +346,247 @@
                         <small class="form-text text-muted">Pisahkan dengan koma jika lebih dari satu</small>
                     </div>
                 </div>
-                <div class="card-footer text-right">
-                    <a href="{{ route('employees.show', $employee) }}" class="btn btn-secondary">Batal</a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Simpan Perubahan
-                    </button>
+            </div>
+            
+            <!-- Education Information Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>Pendidikan <button type="button" class="btn btn-sm btn-primary ml-2" id="add-education"><i class="fas fa-plus"></i> Tambah Pendidikan</button></h4>
                 </div>
+                <div class="card-body">
+                    <div id="education-container">
+                        @forelse($employee->educations as $index => $education)
+                        <div class="education-entry border rounded p-3 mb-3 position-relative">
+                            <button type="button" class="btn btn-sm btn-danger position-absolute remove-education" style="top: 10px; right: 10px;"><i class="fas fa-times"></i></button>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Jenis Pendidikan <span class="text-danger">*</span></label>
+                                        <select class="form-control select2" name="educations[{{ $index }}][education_type]" required>
+                                            <option value="">-- Pilih Jenis Pendidikan --</option>
+                                            <option value="formal" {{ $education->education_type == 'formal' ? 'selected' : '' }}>Formal</option>
+                                            <option value="non_formal" {{ $education->education_type == 'non_formal' ? 'selected' : '' }}>Non-Formal</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Nama Institusi <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="educations[{{ $index }}][institution_name]" value="{{ $education->institution_name }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tingkat Pendidikan <span class="text-danger">*</span></label>
+                                        <select class="form-control select2" name="educations[{{ $index }}][education_level]" required>
+                                            <option value="">-- Pilih Tingkat Pendidikan --</option>
+                                            <option value="sd" {{ $education->education_level == 'sd' ? 'selected' : '' }}>SD / Sederajat</option>
+                                            <option value="smp" {{ $education->education_level == 'smp' ? 'selected' : '' }}>SMP / Sederajat</option>
+                                            <option value="sma" {{ $education->education_level == 'sma' ? 'selected' : '' }}>SMA / Sederajat</option>
+                                            <option value="d1" {{ $education->education_level == 'd1' ? 'selected' : '' }}>D1</option>
+                                            <option value="d2" {{ $education->education_level == 'd2' ? 'selected' : '' }}>D2</option>
+                                            <option value="d3" {{ $education->education_level == 'd3' ? 'selected' : '' }}>D3</option>
+                                            <option value="d4" {{ $education->education_level == 'd4' ? 'selected' : '' }}>D4</option>
+                                            <option value="s1" {{ $education->education_level == 's1' ? 'selected' : '' }}>S1</option>
+                                            <option value="s2" {{ $education->education_level == 's2' ? 'selected' : '' }}>S2</option>
+                                            <option value="s3" {{ $education->education_level == 's3' ? 'selected' : '' }}>S3</option>
+                                            <option value="course" {{ $education->education_level == 'course' ? 'selected' : '' }}>Kursus/Pelatihan</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Jurusan</label>
+                                        <input type="text" class="form-control" name="educations[{{ $index }}][major]" value="{{ $education->major }}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Gelar</label>
+                                        <input type="text" class="form-control" name="educations[{{ $index }}][degree]" value="{{ $education->degree }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Tahun Mulai <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" name="educations[{{ $index }}][start_year]" value="{{ $education->start_year }}" min="1950" max="{{ date('Y') }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Tahun Lulus <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" name="educations[{{ $index }}][graduation_year]" value="{{ $education->graduation_year }}" min="1950" max="{{ date('Y') + 10 }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Nilai / IPK</label>
+                                        <input type="text" class="form-control" name="educations[{{ $index }}][gpa]" value="{{ $education->gpa }}" placeholder="Contoh: 3.50">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Nomor Ijazah</label>
+                                        <input type="text" class="form-control" name="educations[{{ $index }}][certificate_number]" value="{{ $education->certificate_number }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="education-entry border rounded p-3 mb-3 position-relative">
+                            <button type="button" class="btn btn-sm btn-danger position-absolute remove-education" style="top: 10px; right: 10px;"><i class="fas fa-times"></i></button>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Jenis Pendidikan <span class="text-danger">*</span></label>
+                                        <select class="form-control select2" name="educations[0][education_type]" required>
+                                            <option value="">-- Pilih Jenis Pendidikan --</option>
+                                            <option value="formal">Formal</option>
+                                            <option value="non_formal">Non-Formal</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Nama Institusi <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="educations[0][institution_name]" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tingkat Pendidikan <span class="text-danger">*</span></label>
+                                        <select class="form-control select2" name="educations[0][education_level]" required>
+                                            <option value="">-- Pilih Tingkat Pendidikan --</option>
+                                            <option value="sd">SD / Sederajat</option>
+                                            <option value="smp">SMP / Sederajat</option>
+                                            <option value="sma">SMA / Sederajat</option>
+                                            <option value="d1">D1</option>
+                                            <option value="d2">D2</option>
+                                            <option value="d3">D3</option>
+                                            <option value="d4">D4</option>
+                                            <option value="s1">S1</option>
+                                            <option value="s2">S2</option>
+                                            <option value="s3">S3</option>
+                                            <option value="course">Kursus/Pelatihan</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Jurusan</label>
+                                        <input type="text" class="form-control" name="educations[0][major]">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Gelar</label>
+                                        <input type="text" class="form-control" name="educations[0][degree]">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Tahun Mulai <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" name="educations[0][start_year]" min="1950" max="{{ date('Y') }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Tahun Lulus <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" name="educations[0][graduation_year]" min="1950" max="{{ date('Y') + 10 }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Nilai / IPK</label>
+                                        <input type="text" class="form-control" name="educations[0][gpa]" placeholder="Contoh: 3.50">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Nomor Ijazah</label>
+                                        <input type="text" class="form-control" name="educations[0][certificate_number]">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Picture Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>Foto Profil</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            @if($employee->profile_picture)
+                                <div class="mb-3">
+                                    <img src="{{ asset('storage/profile-pictures/' . $employee->profile_picture) }}" 
+                                         alt="{{ $employee->full_name }}" 
+                                         class="img-fluid rounded" 
+                                         style="max-width: 100%;">
+                                </div>
+                            @else
+                                <div class="mb-3 text-center bg-light p-3 rounded">
+                                    <i class="fas fa-user fa-5x text-secondary"></i>
+                                    <p class="mt-2 text-muted">Belum ada foto profil</p>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-group">
+                                <label for="profile_picture">Ganti Foto Pegawai</label>
+                                <div class="custom-file">
+                                    <input type="file" 
+                                           class="custom-file-input @error('profile_picture') is-invalid @enderror" 
+                                           id="profile_picture" 
+                                           name="profile_picture"
+                                           accept="image/jpeg,image/png,image/jpg">
+                                    <label class="custom-file-label" for="profile_picture">Pilih gambar</label>
+                                    @error('profile_picture')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <small class="form-text text-muted">Format yang diperbolehkan: JPG, JPEG, PNG. Maksimal 2MB.</small>
+                            </div>
+                            <div class="mt-3">
+                                <div id="image-preview" class="image-preview" style="display: none; max-width: 200px;">
+                                    <img id="preview" src="#" alt="Preview Foto" class="img-fluid rounded">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer text-right">
+                <a href="{{ route('employees.show', $employee) }}" class="btn btn-secondary">Batal</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Simpan Perubahan
+                </button>
             </div>
         </form>
     </div>
@@ -378,6 +612,138 @@
                 autoApply: true,
                 locale: {
                     format: 'YYYY-MM-DD'
+                }
+            });
+            
+            // Custom file input
+            $('.custom-file-input').on('change', function() {
+                let fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').addClass("selected").html(fileName);
+                
+                // Preview image if this is the profile picture input
+                if (this.id === 'profile_picture') {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            $('#preview').attr('src', e.target.result);
+                            $('#image-preview').show();
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                }
+            });
+            
+            // Education dynamic form
+            // Calculate the starting education index based on existing educations
+            let educationCount = $('.education-entry').length;
+            let educationIndex = educationCount > 0 ? educationCount : 0;
+            
+            // Add new education entry
+            $('#add-education').on('click', function() {
+                educationIndex++;
+                
+                const newEntry = `
+                <div class="education-entry border rounded p-3 mb-3 position-relative">
+                    <button type="button" class="btn btn-sm btn-danger position-absolute remove-education" style="top: 10px; right: 10px;"><i class="fas fa-times"></i></button>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Jenis Pendidikan <span class="text-danger">*</span></label>
+                                <select class="form-control select2" name="educations[${educationIndex}][education_type]" required>
+                                    <option value="">-- Pilih Jenis Pendidikan --</option>
+                                    <option value="formal">Formal</option>
+                                    <option value="non_formal">Non-Formal</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Nama Institusi <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="educations[${educationIndex}][institution_name]" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tingkat Pendidikan <span class="text-danger">*</span></label>
+                                <select class="form-control select2" name="educations[${educationIndex}][education_level]" required>
+                                    <option value="">-- Pilih Tingkat Pendidikan --</option>
+                                    <option value="sd">SD / Sederajat</option>
+                                    <option value="smp">SMP / Sederajat</option>
+                                    <option value="sma">SMA / Sederajat</option>
+                                    <option value="d1">D1</option>
+                                    <option value="d2">D2</option>
+                                    <option value="d3">D3</option>
+                                    <option value="d4">D4</option>
+                                    <option value="s1">S1</option>
+                                    <option value="s2">S2</option>
+                                    <option value="s3">S3</option>
+                                    <option value="course">Kursus/Pelatihan</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Jurusan</label>
+                                <input type="text" class="form-control" name="educations[${educationIndex}][major]">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Gelar</label>
+                                <input type="text" class="form-control" name="educations[${educationIndex}][degree]">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Tahun Mulai <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="educations[${educationIndex}][start_year]" min="1950" max="${new Date().getFullYear()}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Tahun Lulus <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="educations[${educationIndex}][graduation_year]" min="1950" max="${new Date().getFullYear() + 10}" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Nilai / IPK</label>
+                                <input type="text" class="form-control" name="educations[${educationIndex}][gpa]" placeholder="Contoh: 3.50">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Nomor Ijazah</label>
+                                <input type="text" class="form-control" name="educations[${educationIndex}][certificate_number]">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+                
+                $('#education-container').append(newEntry);
+                
+                // Initialize select2 for the new entry
+                $('#education-container .education-entry:last-child .select2').select2();
+            });
+            
+            // Remove education entry
+            $(document).on('click', '.remove-education', function() {
+                if ($('.education-entry').length > 1) {
+                    $(this).closest('.education-entry').remove();
+                } else {
+                    alert('Minimal harus ada satu data pendidikan!');
                 }
             });
         });

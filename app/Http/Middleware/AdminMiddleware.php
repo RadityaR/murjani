@@ -16,8 +16,8 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Check if user is authenticated and has admin role
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
+        // Check if user is authenticated and has admin permission
+        if (!Auth::check() || !Auth::user()->hasPermission('admin')) {
             // If not admin, redirect to home with error message
             return redirect()->route('home')->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
         }

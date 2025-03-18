@@ -12,8 +12,8 @@ class StoreSessionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Only admin users can create sessions
-        return Auth::check() && Auth::user()->role === 'admin';
+        // For now, allow all authenticated users to create sessions
+        return Auth::check();
     }
 
     /**

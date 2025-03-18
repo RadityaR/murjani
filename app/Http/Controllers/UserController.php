@@ -41,7 +41,6 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'nip' => 'required|string|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:admin,hr,user',
             'email' => 'required|string|email|max:255|unique:users',
             'status' => 'required|in:active,suspended,pending',
         ]);
@@ -51,7 +50,6 @@ class UserController extends Controller
             'name' => $validated['name'],
             'nip' => $validated['nip'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
             'email' => $validated['email'],
             'is_active' => $validated['status'] === 'active',
             'status' => $validated['status'],
@@ -59,7 +57,7 @@ class UserController extends Controller
             'department' => null,
             'position' => null,
             'notes' => null,
-            'permissions' => null
+            'permissions' => ['user'] // Default permission
         ];
         
         User::create($userData);
@@ -83,7 +81,7 @@ class UserController extends Controller
     {
         // Check if the authenticated user is trying to edit their own data
         $authUser = Auth::user();
-        if ($authUser && $authUser->role !== 'admin' && $authUser->nip !== $user->nip) {
+        if ($authUser && $authUser->id !== $user->id) {
             abort(403, 'You can only edit your own data.');
         }
 
@@ -97,7 +95,7 @@ class UserController extends Controller
     {
         // Check if the authenticated user is trying to update their own data
         $authUser = Auth::user();
-        if ($authUser && $authUser->role !== 'admin' && $authUser->nip !== $user->nip) {
+        if ($authUser && $authUser->id !== $user->id) {
             abort(403, 'You can only update your own data.');
         }
 
@@ -105,9 +103,8 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'nip' => 'required|string|unique:users,nip,'.$user->id,
             'password' => 'nullable|string|min:8',
-            'role' => $authUser && $authUser->role === 'admin' ? 'required|in:admin,hr,user' : 'prohibited',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
-            'status' => $authUser && $authUser->role === 'admin' ? 'required|in:active,suspended,pending' : 'prohibited',
+            'status' => 'required|in:active,suspended,pending',
         ]);
 
         // Prepare update data
@@ -115,6 +112,8 @@ class UserController extends Controller
             'name' => $validated['name'],
             'nip' => $validated['nip'],
             'email' => $validated['email'],
+            'status' => $validated['status'],
+            'is_active' => $validated['status'] === 'active',
         ];
 
         // Only update password if provided
@@ -122,16 +121,9 @@ class UserController extends Controller
             $userData['password'] = Hash::make($validated['password']);
         }
 
-        // Only admin can update role and status
-        if ($authUser && $authUser->role === 'admin') {
-            $userData['role'] = $validated['role'];
-            $userData['status'] = $validated['status'];
-            $userData['is_active'] = $validated['status'] === 'active';
-        }
-
         $user->update($userData);
 
-        return redirect()->route($authUser && $authUser->role === 'admin' ? 'users.index' : 'home')
+        return redirect()->route('home')
             ->with('success', 'User updated successfully.');
     }
 
@@ -155,11 +147,6 @@ class UserController extends Controller
             'user_ids' => 'required|array',
             'user_ids.*' => 'exists:users,id'
         ]);
-
-        $authUser = Auth::user();
-        if (!$authUser || $authUser->role !== 'admin') {
-            abort(403, 'Only administrators can perform bulk actions.');
-        }
 
         $users = User::whereIn('id', $validated['user_ids']);
         
@@ -194,10 +181,6 @@ class UserController extends Controller
 
         if ($request->filled('department')) {
             $query->where('department', $request->department);
-        }
-
-        if ($request->filled('role')) {
-            $query->where('role', $request->role);
         }
 
         if ($request->filled('search')) {

@@ -44,6 +44,7 @@ class UpdateEmployeeRequest extends FormRequest
             'blood_type' => ['required', Rule::in(['A', 'B', 'AB', 'O'])],
             'religion' => ['required', 'string', 'max:50'],
             'hobbies' => ['nullable', 'string', 'max:255'],
+            'profile_picture' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             
             // Education information
             'educations' => ['nullable', 'array'],

@@ -32,7 +32,6 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'role',
         'permissions',
         'is_active',
         'last_login_at',
@@ -90,29 +89,9 @@ class User extends Authenticatable
      */
     public function hasPermission(string $permission): bool
     {
-        if ($this->role === 'admin') {
-            return true;
-        }
-
         $permissions = $this->permissions ?? [];
         
         return in_array($permission, $permissions) || in_array('all', $permissions);
-    }
-
-    /**
-     * Check if the user is an admin.
-     */
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
-    }
-
-    /**
-     * Check if the user is a manager.
-     */
-    public function isManager(): bool
-    {
-        return $this->role === 'manager';
     }
 
     /**

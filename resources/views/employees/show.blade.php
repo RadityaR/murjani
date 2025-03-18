@@ -48,87 +48,132 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
+                            <div class="col-md-3 text-center mb-4">
+                                @if($employee->profile_picture)
+                                    <img src="{{ asset('storage/profile-pictures/' . $employee->profile_picture) }}" 
+                                         alt="{{ $employee->full_name }}" 
+                                         class="img-fluid rounded shadow" 
+                                         style="max-width: 100%; max-height: 250px;">
+                                @else
+                                    <div class="empty-state" data-height="200">
+                                        <div class="empty-state-icon bg-light">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <p class="mt-2 text-muted">Belum ada foto profil</p>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th width="30%">Nama</th>
+                                                <td>{{ $employee->full_name }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Nomor KTP</th>
+                                                <td>{{ $employee->identity_number ?? '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>NIP</th>
+                                                <td>{{ $employee->nip ?? '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Golongan/Pangkat</th>
+                                                <td>{{ $employee->rankClass->name ?? '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Profesi</th>
+                                                <td>{{ $employee->position->title ?? '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Unit Kerja</th>
+                                                <td>{{ $employee->unit->name ?? '-' }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th>Status Pegawai</th>
+                                                <td>{{ $employee->employment_status ?? '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Email</th>
+                                                <td>{{ $employee->user->email ?? '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Telepon</th>
+                                                <td>{{ $employee->phone_number }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tanggal Lahir</th>
+                                                <td>{{ $employee->birth_date ? $employee->birth_date->format('d F Y') : '-' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Jenis Kelamin</th>
+                                                <td>{{ $employee->gender }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Status Pernikahan</th>
+                                                <td>{{ $employee->marital_status }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th width="15%">Alamat</th>
+                                                <td>{{ $employee->address }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-4">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>Tinggi Badan</th>
+                                        <td>{{ $employee->height_cm }} cm</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-4">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>Berat Badan</th>
+                                        <td>{{ $employee->weight_kg }} kg</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-4">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>Golongan Darah</th>
+                                        <td>{{ $employee->blood_type }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
                             <div class="col-md-6">
                                 <table class="table table-bordered">
                                     <tr>
-                                        <th width="30%">Nama</th>
-                                        <td>{{ $employee->name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Nomor KTP</th>
-                                        <td>{{ $employee->ktp_number ?? '-' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>NIP</th>
-                                        <td>{{ $employee->nip ?? '-' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Golongan/Pangkat</th>
-                                        <td>{{ $employee->golongan_pangkat ?? '-' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Jabatan</th>
-                                        <td>{{ $employee->jabatan ?? '-' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Unit Kerja</th>
-                                        <td>{{ $employee->unit_kerja ?? '-' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Status Pegawai</th>
-                                        <td>{{ $employee->employee_status ?? '-' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Email</th>
-                                        <td>{{ $employee->email }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Telepon</th>
-                                        <td>{{ $employee->phone }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Tanggal Lahir</th>
-                                        <td>{{ $employee->date_of_birth->format('d F Y') }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Jenis Kelamin</th>
-                                        <td>{{ $employee->gender }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Status Pernikahan</th>
-                                        <td>{{ $employee->marital_status }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>SIP</th>
-                                        <td>{{ $employee->sip ?? '-' }}</td>
+                                        <th>Agama</th>
+                                        <td>{{ $employee->religion }}</td>
                                     </tr>
                                 </table>
                             </div>
                             <div class="col-md-6">
                                 <table class="table table-bordered">
                                     <tr>
-                                        <th width="30%">Alamat</th>
-                                        <td>{{ $employee->address }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Tinggi Badan</th>
-                                        <td>{{ $employee->height_cm }} cm</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Berat Badan</th>
-                                        <td>{{ $employee->weight_kg }} kg</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Golongan Darah</th>
-                                        <td>{{ $employee->blood_type }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Agama</th>
-                                        <td>{{ $employee->religion }}</td>
-                                    </tr>
-                                    <tr>
                                         <th>Hobi</th>
-                                        <td>{{ $employee->hobby }}</td>
+                                        <td>{{ $employee->hobbies ?? '-' }}</td>
                                     </tr>
                                 </table>
                             </div>

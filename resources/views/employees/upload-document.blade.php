@@ -14,7 +14,7 @@
         <div class="section-header-breadcrumb">
             <div class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></div>
             <div class="breadcrumb-item"><a href="{{ route('employees.index') }}">Data Pegawai</a></div>
-            <div class="breadcrumb-item"><a href="{{ route('employees.show', $employee) }}">{{ $employee->nama }}</a></div>
+            <div class="breadcrumb-item"><a href="{{ route('employees.show', $employee) }}">{{ $employee->full_name }}</a></div>
             <div class="breadcrumb-item">Upload Dokumen</div>
         </div>
     </div>

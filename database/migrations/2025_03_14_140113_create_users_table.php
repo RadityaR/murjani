@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('email')->unique()->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'manager', 'user'])->default('user');
             $table->json('permissions')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamp('last_login_at')->nullable();
@@ -25,7 +24,6 @@ return new class extends Migration
             $table->softDeletes();
             
             // Add indexes for frequently queried fields
-            $table->index('role');
             $table->index('is_active');
         });
     }

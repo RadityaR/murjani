@@ -39,6 +39,7 @@ class Employee extends Model
         'blood_type',
         'religion',
         'hobbies',
+        'profile_picture',
     ];
 
     /**

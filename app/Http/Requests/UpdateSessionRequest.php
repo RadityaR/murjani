@@ -12,8 +12,8 @@ class UpdateSessionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Only admin users can update sessions
-        return Auth::check() && Auth::user()->role === 'admin';
+        // For now, allow all authenticated users to update sessions
+        return Auth::check();
     }
 
     /**

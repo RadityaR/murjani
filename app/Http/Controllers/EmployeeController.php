@@ -12,6 +12,11 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use App\Models\Department;
+use App\Models\Position;
+use App\Models\Unit;
+use App\Models\RankClass;
 
 class EmployeeController extends Controller
 {
@@ -20,13 +25,20 @@ class EmployeeController extends Controller
      */
     public function index(): View
     {
-        if (auth()->user()->role === 'admin') {
-            $employees = Employee::latest()->paginate(10);
-        } else {
-            $employees = Employee::where('nip', auth()->user()->nip)->paginate(10);
+        try {
+            $employees = Employee::with(['department', 'position', 'unit', 'rankClass'])
+                ->latest()
+                ->paginate(10);
+            
+            return view('employees.index', compact('employees'));
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Error in employee index: ' . $e->getMessage());
+            
+            // Return an empty collection if there's an error
+            $employees = collect([]);
+            return view('employees.index', compact('employees'))->with('error', 'Could not load employees. Check logs for details.');
         }
-        
-        return view('employees.index', compact('employees'));
     }
 
     /**
@@ -34,21 +46,17 @@ class EmployeeController extends Controller
      */
     public function create(): View
     {
-        $user = auth()->user();
+        $departments = Department::all();
+        $positions = Position::all();
+        $units = Unit::all();
+        $rankClasses = RankClass::all();
         
-        // Check if employee data already exists for this user
-        $existingEmployee = Employee::where('nip', $user->nip)->first();
-        if ($existingEmployee) {
-            return redirect()->route('employees.show', $existingEmployee)
-                ->with('error', 'Data pegawai Anda sudah ada dalam sistem.');
-        }
-
-        // Allow admin to create any employee, or user to create their own data
-        if ($user->role === 'admin' || !$existingEmployee) {
-            return view('employees.create', ['user' => $user]);
-        }
-
-        abort(403, 'Unauthorized action.');
+        return view('employees.create', compact(
+            'departments',
+            'positions',
+            'units',
+            'rankClasses'
+        ));
     }
 
     /**
@@ -56,41 +64,84 @@ class EmployeeController extends Controller
      */
     public function store(StoreEmployeeRequest $request): RedirectResponse
     {
-        $user = auth()->user();
-        
-        // Check if employee data already exists for this user
-        $existingEmployee = Employee::where('nip', $user->nip)->first();
-        if ($existingEmployee) {
-            return redirect()->route('employees.show', $existingEmployee)
-                ->with('error', 'Data pegawai Anda sudah ada dalam sistem.');
-        }
-
         try {
             DB::beginTransaction();
 
-            $data = $request->validated();
+            // Prepare data for employee creation
+            $employeeData = $request->safe()->except([
+                'educations', 
+                'work_experiences', 
+                'family_members',
+                'skills',
+                'documents',
+                'profile_picture'
+            ]);
             
-            // If regular user is creating their own data, force their NIP
-            if ($user->role !== 'admin') {
-                $data['nip'] = $user->nip;
+            // Handle profile picture upload
+            if ($request->hasFile('profile_picture')) {
+                $profilePicture = $request->file('profile_picture');
+                $fileName = time() . '_' . $profilePicture->getClientOriginalName();
+                $profilePicture->storeAs('public/profile-pictures', $fileName);
+                $employeeData['profile_picture'] = $fileName;
             }
 
-            $employee = Employee::create($data);
+            // Create employee
+            $employee = Employee::create($employeeData);
 
-            if ($request->hasFile('employee_document')) {
-                $file = $request->file('employee_document');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->storeAs('employee-documents', $filename, 'public');
-                $employee->update(['employee_document' => $filename]);
+            // Handle educations
+            if ($request->has('educations')) {
+                foreach ($request->educations as $education) {
+                    $employee->educations()->create($education);
+                }
+            }
+
+            // Handle work experiences
+            if ($request->has('work_experiences')) {
+                foreach ($request->work_experiences as $experience) {
+                    $employee->workExperiences()->create($experience);
+                }
+            }
+
+            // Handle family members
+            if ($request->has('family_members')) {
+                foreach ($request->family_members as $member) {
+                    $employee->familyMembers()->create($member);
+                }
+            }
+
+            // Handle skills
+            if ($request->has('skills')) {
+                foreach ($request->skills as $skill) {
+                    $employee->skills()->attach($skill['skill_id'], [
+                        'proficiency_level' => $skill['proficiency_level'],
+                        'notes' => $skill['notes'] ?? null,
+                        'acquired_date' => $skill['acquired_date'] ?? null,
+                        'last_used_date' => $skill['last_used_date'] ?? null
+                    ]);
+                }
+            }
+
+            // Handle documents
+            if ($request->has('documents')) {
+                foreach ($request->file('documents') as $document) {
+                    $path = $document['file']->store('employee-documents', 'public');
+                    $employee->documents()->create([
+                        'file_path' => $path,
+                        'document_type' => $document['document_type'],
+                        'description' => $document['description'] ?? null,
+                        'uploaded_by' => 1 // Default admin ID for testing
+                    ]);
+                }
             }
 
             DB::commit();
+            return redirect()->route('employees.show', $employee)
+                ->with('success', 'Employee data has been created successfully.');
 
-            return redirect()->route('home')
-                ->with('success', 'Data pegawai berhasil ditambahkan.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Error creating employee: ' . $e->getMessage());
+            return back()->with('error', 'Error creating employee: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
@@ -99,9 +150,17 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee): View
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->nip !== $employee->nip) {
-            abort(403, 'Unauthorized action.');
-        }
+        $employee->load([
+            'department',
+            'position',
+            'unit',
+            'rankClass',
+            'educations',
+            'workExperiences',
+            'familyMembers',
+            'skills',
+            'documents'
+        ]);
 
         return view('employees.show', compact('employee'));
     }
@@ -111,11 +170,26 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee): View
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->nip !== $employee->nip) {
-            abort(403, 'Unauthorized action.');
-        }
+        $departments = Department::all();
+        $positions = Position::all();
+        $units = Unit::all();
+        $rankClasses = RankClass::all();
+        
+        $employee->load([
+            'educations',
+            'workExperiences',
+            'familyMembers',
+            'skills',
+            'documents'
+        ]);
 
-        return view('employees.edit', compact('employee'));
+        return view('employees.edit', compact(
+            'employee',
+            'departments',
+            'positions',
+            'units',
+            'rankClasses'
+        ));
     }
 
     /**
@@ -123,22 +197,93 @@ class EmployeeController extends Controller
      */
     public function update(UpdateEmployeeRequest $request, Employee $employee): RedirectResponse
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->nip !== $employee->nip) {
-            abort(403, 'Unauthorized action.');
-        }
-
         try {
             DB::beginTransaction();
 
-            $employee->update($request->validated());
+            // Prepare data for employee update
+            $employeeData = $request->safe()->except([
+                'educations', 
+                'work_experiences', 
+                'family_members',
+                'skills',
+                'documents',
+                'profile_picture'
+            ]);
+            
+            // Handle profile picture upload
+            if ($request->hasFile('profile_picture')) {
+                // Delete old profile picture if exists
+                if ($employee->profile_picture) {
+                    Storage::delete('public/profile-pictures/' . $employee->profile_picture);
+                }
+                
+                $profilePicture = $request->file('profile_picture');
+                $fileName = time() . '_' . $profilePicture->getClientOriginalName();
+                $profilePicture->storeAs('public/profile-pictures', $fileName);
+                $employeeData['profile_picture'] = $fileName;
+            }
+
+            // Update employee
+            $employee->update($employeeData);
+
+            // Handle educations
+            if ($request->has('educations')) {
+                $employee->educations()->delete();
+                foreach ($request->educations as $education) {
+                    $employee->educations()->create($education);
+                }
+            }
+
+            // Handle work experiences
+            if ($request->has('work_experiences')) {
+                $employee->workExperiences()->delete();
+                foreach ($request->work_experiences as $experience) {
+                    $employee->workExperiences()->create($experience);
+                }
+            }
+
+            // Handle family members
+            if ($request->has('family_members')) {
+                $employee->familyMembers()->delete();
+                foreach ($request->family_members as $member) {
+                    $employee->familyMembers()->create($member);
+                }
+            }
+
+            // Handle skills
+            if ($request->has('skills')) {
+                $employee->skills()->detach();
+                foreach ($request->skills as $skill) {
+                    $employee->skills()->attach($skill['skill_id'], [
+                        'proficiency_level' => $skill['proficiency_level'],
+                        'notes' => $skill['notes'] ?? null,
+                        'acquired_date' => $skill['acquired_date'] ?? null,
+                        'last_used_date' => $skill['last_used_date'] ?? null
+                    ]);
+                }
+            }
+
+            // Handle documents
+            if ($request->has('documents')) {
+                foreach ($request->file('documents') as $document) {
+                    $path = $document['file']->store('employee-documents', 'public');
+                    $employee->documents()->create([
+                        'file_path' => $path,
+                        'document_type' => $document['document_type'],
+                        'description' => $document['description'] ?? null,
+                        'uploaded_by' => 1 // Default admin ID for testing
+                    ]);
+                }
+            }
 
             DB::commit();
-
             return redirect()->route('employees.show', $employee)
-                ->with('success', 'Employee updated successfully.');
+                ->with('success', 'Employee data has been updated successfully.');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Error updating employee: ' . $e->getMessage());
+            return back()->with('error', 'Error updating employee: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
@@ -147,18 +292,21 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee): RedirectResponse
     {
-        if (!auth()->user()->role === 'admin') {
-            abort(403, 'Unauthorized action.');
-        }
-
         try {
-            if ($employee->employee_document) {
-                Storage::disk('public')->delete('employee-documents/' . $employee->employee_document);
+            DB::beginTransaction();
+            
+            // Delete related documents from storage
+            foreach ($employee->documents as $document) {
+                Storage::disk('public')->delete($document->file_path);
             }
+            
             $employee->delete();
+            
+            DB::commit();
             return redirect()->route('employees.index')
-                ->with('success', 'Employee deleted successfully.');
+                ->with('success', 'Employee has been deleted successfully.');
         } catch (\Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Error deleting employee: ' . $e->getMessage());
         }
     }
@@ -168,10 +316,7 @@ class EmployeeController extends Controller
      */
     public function showUploadForm(Employee $employee): View
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->nip !== $employee->nip) {
-            abort(403, 'Unauthorized action.');
-        }
-
+        $employee->load(['department', 'position', 'unit', 'rankClass', 'user']);
         return view('employees.upload-document', compact('employee'));
     }
 
@@ -180,10 +325,6 @@ class EmployeeController extends Controller
      */
     public function uploadDocument(Request $request, Employee $employee): RedirectResponse
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->nip !== $employee->nip) {
-            abort(403, 'Unauthorized action.');
-        }
-
         $request->validate([
             'employee_document' => 'required|file|mimes:doc,docx,pdf|max:5120'
         ]);
