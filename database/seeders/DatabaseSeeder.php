@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             DocumentSeeder::class,
             FamilyMemberSeeder::class,
             SkillSeeder::class,
+            RoleAndPermissionSeeder::class,
         ]);
     }
 }

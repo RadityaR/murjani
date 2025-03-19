@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Education;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -17,8 +18,6 @@ class ProfileController extends Controller
 
     public function update(Request $request)
     {
-       
-
         try {
             DB::beginTransaction();
 
@@ -28,7 +27,6 @@ class ProfileController extends Controller
             $user->name = $request->input('name');
             $user->email = $request->input('email');
             $user->phone = $request->input('phone');
-            $user->department = $request->input('department');
             $user->position = $request->input('position');
             $user->employee_status = $request->input('employee_status');
             $user->golongan_pangkat = $request->input('golongan_pangkat');
@@ -48,6 +46,12 @@ class ProfileController extends Controller
                 'unit_kerja' => $user->unit_kerja,
                 'address' => $user->address,
             ]);
+
+            // Update department_id if provided
+            if ($request->has('department_id')) {
+                $employee->department_id = $request->input('department_id');
+                $employee->save();
+            }
 
             // Handle education records
             $currentEducationIds = $employee->educations()->pluck('id')->toArray();

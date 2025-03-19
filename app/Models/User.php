@@ -35,6 +35,7 @@ class User extends Authenticatable
         'permissions',
         'is_active',
         'last_login_at',
+        'role',
     ];
 
     /**
@@ -92,6 +93,14 @@ class User extends Authenticatable
         $permissions = $this->permissions ?? [];
         
         return in_array($permission, $permissions) || in_array('all', $permissions);
+    }
+
+    /**
+     * Check if the user has a specific role.
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
     }
 
     /**

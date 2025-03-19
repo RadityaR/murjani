@@ -12,14 +12,14 @@
             <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                 <img alt="image" src="{{ asset('img/avatar/avatar-1.png') }}" class="rounded-circle mr-1">
                 <div class="d-sm-none d-lg-inline-block">
-                    Hai, {{ substr(auth()->user()->name, 0, 10) }}
+                    Hai, {{ substr(auth()->user()->username, 0, 10) }}
                 </div>
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <div class="dropdown-title">
-                    Selamat Datang, {{ substr(auth()->user()->name, 0, 10) }}
+                    Selamat Datang, {{ substr(auth()->user()->username, 0, 10) }}
                 </div>
-                <a class="dropdown-item has-icon edit-profile" href="{{ route('profile.edit') }}">
+                <a class="dropdown-item has-icon edit-profile" href="{{ route('profile.index') }}">
                     <i class="fa fa-user"></i> Edit Profile
                 </a>
                 <div class="dropdown-divider"></div>

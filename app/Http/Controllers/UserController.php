@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        $departments = User::distinct('department')->pluck('department')->filter();
+        $departments = Department::pluck('name', 'id');
         return view('users.index', compact('users', 'departments'));
     }
 
@@ -54,7 +55,6 @@ class UserController extends Controller
             'is_active' => $validated['status'] === 'active',
             'status' => $validated['status'],
             'phone' => null,
-            'department' => null,
             'position' => null,
             'notes' => null,
             'permissions' => ['user'] // Default permission
@@ -180,7 +180,9 @@ class UserController extends Controller
         }
 
         if ($request->filled('department')) {
-            $query->where('department', $request->department);
+            $query->whereHas('employee', function($q) use ($request) {
+                $q->where('department_id', $request->department);
+            });
         }
 
         if ($request->filled('search')) {

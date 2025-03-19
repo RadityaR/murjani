@@ -20,7 +20,7 @@ return new class extends Migration
             $table->json('settings')->nullable()->comment('JSON configuration for the form template');
             $table->integer('max_file_uploads')->default(5);
             $table->integer('sort_order')->default(0);
-            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();

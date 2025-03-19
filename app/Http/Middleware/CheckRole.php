@@ -13,8 +13,18 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string $role): Response
     {
+        if (!$request->user() || !$request->user()->hasRole($role)) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'You do not have the required role to perform this action.'
+                ], 403);
+            }
+
+            abort(403, 'You do not have the required role to perform this action.');
+        }
+
         return $next($request);
     }
 }

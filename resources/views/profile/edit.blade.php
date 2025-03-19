@@ -83,9 +83,16 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="department">Department</label>
-                                <input type="text" id="department" name="department" class="form-control @error('department') is-invalid @enderror" value="{{ old('department', $user->department) }}">
-                                @error('department')
+                                <label for="department_id">Department</label>
+                                <select id="department_id" name="department_id" class="form-control select2 @error('department_id') is-invalid @enderror">
+                                    <option value="">Select Department</option>
+                                    @foreach(\App\Models\Department::orderBy('name')->get() as $department)
+                                        <option value="{{ $department->id }}" {{ old('department_id', $user->employee?->department_id) == $department->id ? 'selected' : '' }}>
+                                            {{ $department->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('department_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>

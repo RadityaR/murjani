@@ -83,8 +83,8 @@
                                 <div class="col-md-3">
                                     <select class="form-control select2" id="department-filter">
                                         <option value="">All Departments</option>
-                                        @foreach($departments as $department)
-                                            <option value="{{ $department }}">{{ $department }}</option>
+                                        @foreach($departments as $id => $name)
+                                            <option value="{{ $id }}">{{ $name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -158,7 +158,7 @@
                                                 <td>{{ $user->name }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ $user->nip }}</td>
-                                                <td>{{ $user->department ?? '-' }}</td>
+                                                <td>{{ $user->employee?->department?->name ?? '-' }}</td>
                                                 <td>{{ $user->position ?? '-' }}</td>
                                                 <td>
                                                     <div class="badge badge-{{ $user->role == 'admin' ? 'primary' : ($user->role == 'hr' ? 'info' : 'light') }}">
