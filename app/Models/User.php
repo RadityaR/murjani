@@ -18,7 +18,6 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -136,37 +135,5 @@ class User extends Authenticatable
             'id', // Local key on users table
             'id' // Local key on employees table
         );
-    }
-
-    /**
-     * Get the roles associated with the user.
-     */
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class, 'role_user');
-    }
-
-    /**
-     * Check if the user has a specific role.
-     */
-    public function hasRole(string $roleSlug): bool
-    {
-        return $this->roles()->where('slug', $roleSlug)->exists();
-    }
-
-    /**
-     * Assign a role to the user.
-     */
-    public function assignRole(Role $role): void
-    {
-        $this->roles()->syncWithoutDetaching([$role->id]);
-    }
-
-    /**
-     * Remove a role from the user.
-     */
-    public function removeRole(Role $role): void
-    {
-        $this->roles()->detach($role);
     }
 }

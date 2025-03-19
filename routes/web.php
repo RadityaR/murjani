@@ -13,8 +13,6 @@ use App\Http\Controllers\FormFieldController;
 use App\Http\Controllers\FormSubmissionController;
 use App\Http\Controllers\FormDocumentController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\UserRoleController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -88,35 +86,6 @@ Route::get('/examples/table', [ExampleController::class, 'table'])->name('exampl
    Route::post('form-documents/{formDocument}/review', [FormDocumentController::class, 'review'])
        ->name('form-documents.review');
 
-// Role management routes
-Route::resource('roles', RoleController::class);
-
-// User role management routes
-Route::get('users/{user}/roles', [UserRoleController::class, 'index'])->name('user-roles.index');
-Route::post('users/{user}/roles', [UserRoleController::class, 'assign'])->name('user-roles.assign');
-Route::delete('users/{user}/roles/{role}', [UserRoleController::class, 'remove'])->name('user-roles.remove');
-
-// Role and permission protected routes
-Route::middleware(['auth'])->group(function () {
-    // Admin-only routes
-    Route::middleware(['role:admin'])->group(function () {
-        Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
-    });
-    
-    // Manager-only routes
-    Route::middleware(['role:manager'])->group(function () {
-        Route::get('/manager/dashboard', [DashboardController::class, 'managerDashboard'])->name('manager.dashboard');
-    });
-    
-    // Permission-based routes
-    Route::middleware(['permission:view_employees'])->group(function () {
-        Route::get('/employees/view-all', [EmployeeController::class, 'viewAll'])->name('employees.view-all');
-    });
-    
-    Route::middleware(['permission:edit_employees'])->group(function () {
-        Route::get('/employees/{employee}/edit-details', [EmployeeController::class, 'editDetails'])->name('employees.edit-details');
-    });
-});
 
 // Form Template Routes
 // Route::middleware(['auth'])->group(function () {

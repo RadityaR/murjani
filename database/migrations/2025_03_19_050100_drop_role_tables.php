@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        Schema::dropIfExists('role_user');
+        Schema::dropIfExists('roles');
     }
 
     /**
      * Reverse the migrations.
+     * Note: This doesn't recreate the tables with their original structure
+     * as this is a simplification migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        // If you need to rollback this migration, you should manually recreate
+        // the tables with their original structure
     }
 };
