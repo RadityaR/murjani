@@ -12,6 +12,9 @@
             <li class="{{ Request::is('home') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ url('home') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
+            <li class="{{ Request::is('dashboard') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('dashboard.index') }}"><i class="fas fa-th-large"></i><span>Dashboard Index</span></a>
+            </li>
 
             <!-- File Upload Menu -->
             <li class="menu-header">Berkas</li>

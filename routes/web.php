@@ -8,6 +8,13 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FileUploadController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\FormTemplateController;
+use App\Http\Controllers\FormFieldController;
+use App\Http\Controllers\FormSubmissionController;
+use App\Http\Controllers\FormDocumentController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserRoleController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -15,6 +22,9 @@ Route::get('/', function () {
 
 // Authentication routes (assuming you're using Laravel's built-in auth)
 Auth::routes();
+
+// Dashboard routes
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
 // Home routes
 Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -43,3 +53,72 @@ Route::get('/examples/blank', [ExampleController::class, 'blank'])->name('exampl
 Route::get('/examples/form', [ExampleController::class, 'form'])->name('examples.form');
 Route::get('/examples/chart', [ExampleController::class, 'chart'])->name('examples.chart');
 Route::get('/examples/table', [ExampleController::class, 'table'])->name('examples.table');
+
+   // Form Templates
+   Route::resource('form-templates', FormTemplateController::class);
+   Route::put('form-templates/{formTemplate}/toggle-active', [FormTemplateController::class, 'toggleActive'])
+       ->name('form-templates.toggle-active');
+   
+   // Form Fields
+   Route::post('form-templates/{formTemplate}/fields', [FormFieldController::class, 'store'])
+       ->name('form-fields.store');
+   Route::put('form-templates/{formTemplate}/fields/{formField}', [FormFieldController::class, 'update'])
+       ->name('form-fields.update');
+   Route::delete('form-templates/{formTemplate}/fields/{formField}', [FormFieldController::class, 'destroy'])
+       ->name('form-fields.destroy');
+   Route::post('form-templates/{formTemplate}/fields/order', [FormFieldController::class, 'updateOrder'])
+       ->name('form-fields.order');
+   
+   // Form Submissions
+   Route::resource('form-submissions', FormSubmissionController::class);
+   Route::get('form-templates/{formTemplate}/submit', [FormSubmissionController::class, 'create'])
+       ->name('form-submissions.create-from-template');
+   Route::post('form-submissions/{formSubmission}/review', [FormSubmissionController::class, 'review'])
+       ->name('form-submissions.review');
+   
+   // Form Documents
+   Route::post('form-documents', [FormDocumentController::class, 'store'])
+       ->name('form-documents.store');
+   Route::get('form-documents/{formDocument}', [FormDocumentController::class, 'show'])
+       ->name('form-documents.show');
+   Route::get('form-documents/{formDocument}/download', [FormDocumentController::class, 'download'])
+       ->name('form-documents.download');
+   Route::delete('form-documents/{formDocument}', [FormDocumentController::class, 'destroy'])
+       ->name('form-documents.destroy');
+   Route::post('form-documents/{formDocument}/review', [FormDocumentController::class, 'review'])
+       ->name('form-documents.review');
+
+// Role management routes
+Route::resource('roles', RoleController::class);
+
+// User role management routes
+Route::get('users/{user}/roles', [UserRoleController::class, 'index'])->name('user-roles.index');
+Route::post('users/{user}/roles', [UserRoleController::class, 'assign'])->name('user-roles.assign');
+Route::delete('users/{user}/roles/{role}', [UserRoleController::class, 'remove'])->name('user-roles.remove');
+
+// Role and permission protected routes
+Route::middleware(['auth'])->group(function () {
+    // Admin-only routes
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
+    });
+    
+    // Manager-only routes
+    Route::middleware(['role:manager'])->group(function () {
+        Route::get('/manager/dashboard', [DashboardController::class, 'managerDashboard'])->name('manager.dashboard');
+    });
+    
+    // Permission-based routes
+    Route::middleware(['permission:view_employees'])->group(function () {
+        Route::get('/employees/view-all', [EmployeeController::class, 'viewAll'])->name('employees.view-all');
+    });
+    
+    Route::middleware(['permission:edit_employees'])->group(function () {
+        Route::get('/employees/{employee}/edit-details', [EmployeeController::class, 'editDetails'])->name('employees.edit-details');
+    });
+});
+
+// Form Template Routes
+// Route::middleware(['auth'])->group(function () {
+ 
+// });
