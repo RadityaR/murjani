@@ -106,7 +106,17 @@ class AuthController extends Controller
                 ]);
             }
 
-            return redirect()->intended('dashboard');
+            // Redirect admin users to dashboard, others to home
+            if ($user->role === 'admin' || $user->role === 'superadmin') {
+                return redirect()->route('dashboard.index');
+            }
+
+            // For regular users, check employee data
+            if (!$user->employee) {
+                session()->flash('employee_data_required', true);
+            }
+
+            return redirect()->route('home');
         }
 
         if ($request->wantsJson()) {

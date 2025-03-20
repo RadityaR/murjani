@@ -21,6 +21,27 @@
     </div>
 
     <div class="section-body">
+        @if(session('warning'))
+            <div class="alert alert-warning alert-dismissible show fade">
+                <div class="alert-body">
+                    <button class="close" data-dismiss="alert">
+                        <span>×</span>
+                    </button>
+                    {{ session('warning') }}
+                </div>
+            </div>
+        @endif
+        
+        <!-- Required Data Message -->
+        <div class="alert alert-info alert-has-icon">
+            <div class="alert-icon"><i class="fas fa-info-circle"></i></div>
+            <div class="alert-body">
+                <div class="alert-title">Perhatian</div>
+                <p>Anda perlu mengisi data pegawai untuk dapat mengakses fitur-fitur lainnya dalam sistem. Data ini diperlukan untuk kelengkapan profil Anda.</p>
+                <p class="mb-0"><strong>Catatan:</strong> Anda tetap dapat mengubah kata sandi meskipun belum mengisi data pegawai.</p>
+            </div>
+        </div>
+
         @if(session('error'))
             <div class="alert alert-danger alert-dismissible show fade">
                 <div class="alert-body">

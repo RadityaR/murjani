@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
@@ -13,16 +14,30 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, $role): Response
     {
-        if (!$request->user() || !$request->user()->hasRole($role)) {
-            if ($request->wantsJson()) {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        $user = Auth::user();
+        
+        // Allow superadmin to access everything
+        if ($user->role === 'superadmin') {
+            return $next($request);
+        }
+
+        // Check if user has the required role
+        if ($user->role !== $role) {
+            if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
-                    'message' => 'You do not have the required role to perform this action.'
+                    'error' => true,
+                    'message' => 'Unauthorized access.'
                 ], 403);
             }
-
-            abort(403, 'You do not have the required role to perform this action.');
+            
+            return redirect()->route('home')
+                ->with('error', 'Unauthorized access.');
         }
 
         return $next($request);

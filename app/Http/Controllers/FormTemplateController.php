@@ -112,4 +112,18 @@ class FormTemplateController extends Controller
         return redirect()->route('form-templates.index')
             ->with('success', "Form template {$status} successfully.");
     }
+
+    /**
+     * Display a list of active templates for regular users.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function userList()
+    {
+        $templates = FormTemplate::where('is_active', true)
+            ->latest()
+            ->paginate(10);
+            
+        return view('form-templates.user-list', compact('templates'));
+    }
 } 

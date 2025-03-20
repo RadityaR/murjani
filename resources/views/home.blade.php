@@ -40,49 +40,40 @@
         @endif
 
         <div class="section-body">
-            @if(auth()->user()->role === 'admin')
+            @include('partials.alerts')
+
+            @if(!auth()->user()->employee)
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-large-icons bg-warning text-white">
+                        <div class="card-icon bg-warning text-white">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="text-white">Perhatian!</h4>
+                            <p>Anda belum melengkapi data pegawai. Untuk dapat mengakses fitur-fitur lainnya dalam sistem, silakan lengkapi data pegawai Anda.</p>
+                            <a href="{{ route('employees.create') }}" class="btn btn-light mt-3">
+                                <i class="fas fa-user-edit"></i> Lengkapi Data Pegawai
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            @if(auth()->user()->employee)
             <div class="row">
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
                         <div class="card-icon bg-primary">
-                            <i class="fas fa-users"></i>
+                            <i class="fas fa-file-upload"></i>
                         </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Total Users</h4>
+                                <h4>Dokumen Tersedia</h4>
                             </div>
                             <div class="card-body">
-                                {{ \App\Models\User::count() }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1">
-                        <div class="card-icon bg-danger">
-                            <i class="fas fa-user-shield"></i>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card-header">
-                                <h4>Admin Users</h4>
-                            </div>
-                            <div class="card-body">
-                                {{ \App\Models\User::where('role', 'admin')->count() }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1">
-                        <div class="card-icon bg-warning">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card-header">
-                                <h4>HR Users</h4>
-                            </div>
-                            <div class="card-body">
-                                {{ \App\Models\User::where('role', 'hr')->count() }}
+                                {{ \App\Models\FormTemplate::where('is_active', true)->count() }}
                             </div>
                         </div>
                     </div>
@@ -90,14 +81,44 @@
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
                         <div class="card-icon bg-success">
-                            <i class="fas fa-user"></i>
+                            <i class="fas fa-clipboard-check"></i>
                         </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Regular Users</h4>
+                                <h4>Dokumen Disetujui</h4>
                             </div>
                             <div class="card-body">
-                                {{ \App\Models\User::where('role', 'user')->count() }}
+                                {{ \App\Models\FormSubmission::where('user_id', auth()->id())->where('status', 'approved')->count() }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                    <div class="card card-statistic-1">
+                        <div class="card-icon bg-warning">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="card-wrap">
+                            <div class="card-header">
+                                <h4>Dokumen Pending</h4>
+                            </div>
+                            <div class="card-body">
+                                {{ \App\Models\FormSubmission::where('user_id', auth()->id())->where('status', 'pending')->count() }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                    <div class="card card-statistic-1">
+                        <div class="card-icon bg-danger">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="card-wrap">
+                            <div class="card-header">
+                                <h4>Dokumen Ditolak</h4>
+                            </div>
+                            <div class="card-body">
+                                {{ \App\Models\FormSubmission::where('user_id', auth()->id())->where('status', 'rejected')->count() }}
                             </div>
                         </div>
                     </div>
@@ -105,147 +126,85 @@
             </div>
 
             <div class="row">
-                <div class="col-12">
+                <div class="col-12 col-md-6 col-lg-6">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Data Pegawai Terbaru</h4>
+                            <h4>Dokumen Tersedia untuk Diisi</h4>
                             <div class="card-header-action">
-                                <a href="{{ route('employees.index') }}" class="btn btn-primary">Lihat Semua <i class="fas fa-chevron-right"></i></a>
+                                <a href="{{ route('form-templates.user-list') }}" class="btn btn-primary">Lihat Semua</a>
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-striped" id="employee-table">
+                                <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th>NIP</th>
-                                            <th>Nama</th>
-                                            <th>Golongan</th>
-                                            <th>Jabatan</th>
-                                            <th>Unit Kerja</th>
+                                            <th>Jenis Dokumen</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php
-                                            $latestEmployees = \App\Models\Employee::latest()->take(5)->get();
-                                        @endphp
-                                        @foreach($latestEmployees as $employee)
+                                        @forelse(\App\Models\FormTemplate::where('is_active', true)->latest()->take(5)->get() as $template)
                                         <tr>
-                                            <td>{{ $employee->nip }}</td>
-                                            <td>{{ $employee->nama }}</td>
-                                            <td>{{ $employee->golongan }}</td>
-                                            <td>{{ $employee->jabatan }}</td>
-                                            <td>{{ $employee->unit_kerja }}</td>
+                                            <td>{{ $template->title }}</td>
                                             <td>
-                                                <a href="{{ route('employees.show', $employee) }}" class="btn btn-info btn-sm">
-                                                    <i class="fas fa-eye"></i> Detail
+                                                <a href="{{ route('form-submissions.create-from-template', $template) }}" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-file-upload"></i> Isi Dokumen
                                                 </a>
                                             </td>
                                         </tr>
-                                        @endforeach
+                                        @empty
+                                        <tr>
+                                            <td colspan="2" class="text-center">Tidak ada dokumen yang tersedia</td>
+                                        </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            @else
-            <div class="row">
-                <div class="col-12">
+                <div class="col-12 col-md-6 col-lg-6">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Informasi Pegawai</h4>
+                            <h4>Dokumen Terakhir Disubmit</h4>
+                            <div class="card-header-action">
+                                <a href="{{ route('form-submissions.user-submissions') }}" class="btn btn-primary">Lihat Semua</a>
+                            </div>
                         </div>
                         <div class="card-body">
-                            @if($employee)
-                                <div class="row">
-                                    <div class="col-md-4 text-center">
-                                        <div class="mb-3">
-                                            <img src="{{ $employee->photo ? asset('storage/employee-photos/'.$employee->photo) : asset('img/avatar/avatar-1.png') }}" 
-                                                alt="Profile Photo" class="rounded-circle" width="150" height="150">
-                                        </div>
-                                        <h4>{{ $employee->nama }}</h4>
-                                        <p class="text-muted">{{ $employee->nip }}</p>
-                                        <p class="badge badge-primary">{{ $employee->jabatan }}</p>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Golongan/Pangkat</label>
-                                                    <p class="form-control-static">{{ $employee->golongan ?: '-' }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Unit Kerja</label>
-                                                    <p class="form-control-static">{{ $employee->unit_kerja ?: '-' }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Email</label>
-                                                    <p class="form-control-static">{{ $employee->email ?: '-' }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Telepon</label>
-                                                    <p class="form-control-static">{{ $employee->telepon ?: '-' }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Alamat</label>
-                                                    <p class="form-control-static">{{ $employee->alamat ?: '-' }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Dokumen</label>
-                                                    <p class="form-control-static">
-                                                        @if($employee->employee_document)
-                                                            <a href="{{ asset('storage/employee-documents/'.$employee->employee_document) }}" 
-                                                               target="_blank" class="btn btn-sm btn-info">
-                                                                <i class="fas fa-file-download"></i> Download Dokumen
-                                                            </a>
-                                                        @else
-                                                            <span class="text-muted">Belum ada dokumen</span>
-                                                        @endif
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mt-3">
-                                            <div class="col-12">
-                                                <a href="{{ route('employees.edit', $employee) }}" class="btn btn-primary">
-                                                    <i class="fas fa-edit"></i> Edit Profil
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Jenis Dokumen</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse(\App\Models\FormSubmission::where('user_id', auth()->id())->with('formTemplate')->latest()->take(5)->get() as $submission)
+                                        <tr>
+                                            <td>{{ $submission->formTemplate ? $submission->formTemplate->title : 'N/A' }}</td>
+                                            <td>
+                                                <span class="badge badge-{{ $submission->status == 'approved' ? 'success' : ($submission->status == 'rejected' ? 'danger' : 'warning') }}">
+                                                    {{ ucfirst($submission->status) }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('form-submissions.show', $submission) }}" class="btn btn-info btn-sm">
+                                                    <i class="fas fa-eye"></i> Lihat
                                                 </a>
-                                                <a href="{{ route('employees.upload-document', $employee) }}" class="btn btn-warning">
-                                                    <i class="fas fa-file-upload"></i> Upload Dokumen
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @else
-                                <div class="empty-state" data-height="400">
-                                    <div class="empty-state-icon">
-                                        <i class="fas fa-question"></i>
-                                    </div>
-                                    <h2>Anda belum memiliki data pegawai</h2>
-                                    <p class="lead">
-                                        Silakan lengkapi data pegawai Anda terlebih dahulu untuk mengakses fitur lainnya.
-                                    </p>
-                                    <a href="{{ route('employees.create') }}" class="btn btn-primary mt-4">Lengkapi Data Pegawai</a>
-                                </div>
-                            @endif
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center">Belum ada dokumen yang disubmit</td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

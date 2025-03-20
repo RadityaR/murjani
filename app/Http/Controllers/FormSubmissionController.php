@@ -167,4 +167,19 @@ class FormSubmissionController extends Controller
         return redirect()->route('form-submissions.show', $formSubmission->id)
             ->with('success', 'Form submission reviewed successfully.');
     }
+
+    /**
+     * Display a list of the current user's form submissions.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function userSubmissions()
+    {
+        $submissions = FormSubmission::where('user_id', auth()->id())
+            ->with('formTemplate')
+            ->latest()
+            ->paginate(10);
+            
+        return view('form-submissions.user-submissions', compact('submissions'));
+    }
 } 

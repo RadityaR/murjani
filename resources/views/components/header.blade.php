@@ -19,7 +19,7 @@
                 <div class="dropdown-title">
                     Selamat Datang, {{ substr(auth()->user()->username, 0, 10) }}
                 </div>
-                <a class="dropdown-item has-icon edit-profile" href="{{ route('profile.index') }}">
+                <a class="dropdown-item has-icon edit-profile" href="{{ route('profile.edit') }}">
                     <i class="fa fa-user"></i> Edit Profile
                 </a>
                 <div class="dropdown-divider"></div>

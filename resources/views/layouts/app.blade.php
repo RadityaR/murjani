@@ -28,7 +28,8 @@
     <!-- Additional CSS (if any) -->
     @stack('css')
 </head>
-<body>
+<body data-employee-data-required="{{ auth()->check() && !auth()->user()->employee ? 'true' : 'false' }}" 
+      data-employee-form-url="{{ route('employees.create') }}">
     <div id="app">
         <div class="main-wrapper">
             <!-- Header -->
@@ -47,23 +48,48 @@
         </div>
     </div>
 
+    <!-- Employee Data Required Modal -->
+    @if(auth()->check() && !auth()->user()->employee)
+    <div class="modal fade" id="employee-data-required-modal" tabindex="-1" role="dialog" aria-labelledby="employeeDataRequiredModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title" id="employeeDataRequiredModalLabel">
+                        <i class="fas fa-exclamation-triangle"></i> Perhatian
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Anda perlu melengkapi data pegawai terlebih dahulu sebelum dapat mengakses fitur ini.</p>
+                    <p>Silakan lengkapi data pegawai Anda untuk mengakses semua fitur dalam sistem.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <a href="{{ route('employees.create') }}" class="btn btn-primary">
+                        <i class="fas fa-user-edit"></i> Lengkapi Data Pegawai
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- jQuery and Popper.js (required for Bootstrap 4) -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-
-    <!-- Bootstrap JS (Bootstrap 4) -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <!-- Custom JS Libraries -->
-    <script src="{{ asset('library/jquery.nicescroll/dist/jquery.nicescroll.min.js') }}"></script>
-    <script src="{{ asset('library/moment/min/moment.min.js') }}"></script>
-
-    <!-- Template JS Files -->
+    <!-- Stisla JS -->
     <script src="{{ asset('js/stisla.js') }}"></script>
     <script src="{{ asset('js/scripts.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
+    
+    <!-- Employee Data Check JS -->
+    <script src="{{ asset('js/employee-data-check.js') }}"></script>
 
-    <!-- Additional JS (if any) -->
+    <!-- Additional Scripts (if any) -->
     @stack('scripts')
 </body>
 </html>

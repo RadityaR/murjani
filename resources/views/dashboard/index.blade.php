@@ -9,6 +9,25 @@
     </div>
 
     <div class="section-body">
+        @if(session('employee_data_required') || !auth()->user()->employee)
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-large-icons bg-warning text-white">
+                    <div class="card-icon bg-warning text-white">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="text-white">Perhatian!</h4>
+                        <p>Anda belum melengkapi data pegawai. Untuk dapat mengakses fitur-fitur lainnya dalam sistem, silakan lengkapi data pegawai Anda.</p>
+                        <a href="{{ route('employees.create') }}" class="btn btn-light mt-3">
+                            <i class="fas fa-user-edit"></i> Lengkapi Data Pegawai
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <div class="row">
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">

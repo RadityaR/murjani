@@ -128,7 +128,7 @@ class User extends Authenticatable
         if (!$this->is_active) {
             return 'inactive';
         }
-        return $value;
+        return $value ?? 'pending'; // Provide a default value when $value is null
     }
 
     /**
