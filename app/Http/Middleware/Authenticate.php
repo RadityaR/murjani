@@ -4,10 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckEmployeeDataSubmission
+class Authenticate
 {
     /**
      * Handle an incoming request.
@@ -16,7 +15,6 @@ class CheckEmployeeDataSubmission
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Bypass employee data checks - allow direct access
         return $next($request);
     }
-} 
+}

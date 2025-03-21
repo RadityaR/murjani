@@ -13,15 +13,11 @@ class AdminMiddleware
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Check if user is authenticated and has admin permission
-        if (!Auth::check() || !Auth::user()->hasPermission('admin')) {
-            // If not admin, redirect to home with error message
-            return redirect()->route('home')->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
-        }
-
+        // Bypass all authentication and role checks - allow direct access
         return $next($request);
     }
 }

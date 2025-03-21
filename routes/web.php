@@ -19,107 +19,96 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Authentication routes
-Route::middleware('guest')->group(function () {
-    Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [AuthController::class, 'login']);
-    Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('register');
-    Route::post('register', [AuthController::class, 'register']);
-});
+// Authentication routes - available but not required
+Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('login', [AuthController::class, 'login']);
+Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('register');
+Route::post('register', [AuthController::class, 'register']);
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('user', [AuthController::class, 'user'])->name('user');
 
-Route::middleware('auth')->group(function () {
-    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('user', [AuthController::class, 'user'])->name('user');
+// Home route for all users
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    // Home route for all users
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+// Profile password change routes
+Route::get('/profile/change-password', [ProfileController::class, 'changepassword'])->name('profile.changepassword');
+Route::post('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
 
-    // Profile password change routes (accessible without employee data)
-    Route::get('/profile/change-password', [ProfileController::class, 'changepassword'])->name('profile.changepassword');
-    Route::post('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
+// Employee data submission routes
+Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
+Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+
+// Dashboard routes
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+Route::get('/blank', [HomeController::class, 'blank'])->name('blank');
+
+// File upload routes
+Route::resource('files', FileUploadController::class);
+Route::get('files/{file}/download', [FileUploadController::class, 'download'])->name('files.download');
+Route::post('files/{file}/validate', [FileUploadController::class, 'validateFile'])->name('files.validate');
+
+// User management routes
+Route::resource('users', UserController::class);
+Route::post('users/bulk-action', [UserController::class, 'bulkAction'])->name('users.bulk-action');
+Route::get('users/filter', [UserController::class, 'filter'])->name('users.filter');
+
+// HakAkses routes
+Route::resource('hakakses', HakAksesController::class);
+Route::post('hakakses/{hakakses}/delete', [HakAksesController::class, 'destroy'])->name('hakakses.delete');
+
+// Employee routes (except create and store)
+Route::get('employees', [EmployeeController::class, 'index'])->name('employees.index');
+Route::get('employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
+Route::get('employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
+Route::put('employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
+Route::delete('employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+Route::get('employees/{employee}/upload-document', [EmployeeController::class, 'showUploadForm'])->name('employees.upload-document');
+Route::post('employees/{employee}/upload-document', [EmployeeController::class, 'uploadDocument'])->name('employees.upload-document.store');
+Route::get('employees/{employee}/upload-form', [EmployeeController::class, 'showUploadForm'])->name('employees.upload-form');
+
+// Form Templates Management
+Route::resource('form-templates', FormTemplateController::class);
+Route::put('form-templates/{formTemplate}/toggle-active', [FormTemplateController::class, 'toggleActive'])
+    ->name('form-templates.toggle-active');
+
+// Form Fields Management
+Route::post('form-templates/{formTemplate}/fields', [FormFieldController::class, 'store'])
+    ->name('form-fields.store');
+Route::put('form-templates/{formTemplate}/fields/{formField}', [FormFieldController::class, 'update'])
+    ->name('form-fields.update');
+Route::delete('form-templates/{formTemplate}/fields/{formField}', [FormFieldController::class, 'destroy'])
+    ->name('form-fields.destroy');
+Route::post('form-templates/{formTemplate}/fields/order', [FormFieldController::class, 'updateOrder'])
+    ->name('form-fields.order');
+
+// Form Submissions Management
+Route::resource('form-submissions', FormSubmissionController::class)->except(['create', 'store']);
+Route::post('form-submissions/{formSubmission}/review', [FormSubmissionController::class, 'review'])
+    ->name('form-submissions.review');
+
+// Form Documents Management
+Route::post('form-documents', [FormDocumentController::class, 'store'])
+    ->name('form-documents.store');
+Route::get('form-documents/{formDocument}', [FormDocumentController::class, 'show'])
+    ->name('form-documents.show');
+Route::get('form-documents/{formDocument}/download', [FormDocumentController::class, 'download'])
+    ->name('form-documents.download');
+Route::delete('form-documents/{formDocument}', [FormDocumentController::class, 'destroy'])
+    ->name('form-documents.destroy');
+Route::post('form-documents/{formDocument}/review', [FormDocumentController::class, 'review'])
+    ->name('form-documents.review');
+
+// Public document routes for users with employee data
+Route::get('/form-templates/list', [FormTemplateController::class, 'userList'])->name('form-templates.user-list');
+Route::get('/form-templates/{formTemplate}/submit', [FormSubmissionController::class, 'create'])
+    ->name('form-submissions.create-from-template');
+Route::post('/form-submissions', [FormSubmissionController::class, 'store'])->name('form-submissions.store');
+Route::get('/form-submissions/my-submissions', [FormSubmissionController::class, 'userSubmissions'])
+    ->name('form-submissions.user-submissions');
     
-    // Employee data submission routes (always accessible)
-    Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
-    Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
-
-    // Admin only routes (outside employee.data middleware)
-    Route::middleware('role:admin')->group(function () {
-        // Dashboard routes
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-        Route::get('/blank', [HomeController::class, 'blank'])->name('blank');
-    
-        // File upload routes
-        Route::resource('files', FileUploadController::class);
-        Route::get('files/{file}/download', [FileUploadController::class, 'download'])->name('files.download');
-        Route::post('files/{file}/validate', [FileUploadController::class, 'validateFile'])->name('files.validate');
-
-        // User management routes
-        Route::resource('users', UserController::class);
-        Route::post('users/bulk-action', [UserController::class, 'bulkAction'])->name('users.bulk-action');
-        Route::get('users/filter', [UserController::class, 'filter'])->name('users.filter');
-
-        // HakAkses routes
-        Route::resource('hakakses', HakAksesController::class);
-        Route::post('hakakses/{hakakses}/delete', [HakAksesController::class, 'destroy'])->name('hakakses.delete');
-
-        // Employee routes (except create and store)
-        Route::get('employees', [EmployeeController::class, 'index'])->name('employees.index');
-        Route::get('employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
-        Route::get('employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
-        Route::put('employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
-        Route::delete('employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
-        Route::get('employees/{employee}/upload-document', [EmployeeController::class, 'showUploadForm'])->name('employees.upload-document');
-        Route::post('employees/{employee}/upload-document', [EmployeeController::class, 'uploadDocument'])->name('employees.upload-document.store');
-        Route::get('employees/{employee}/upload-form', [EmployeeController::class, 'showUploadForm'])->name('employees.upload-form');
-
-        // Form Templates Management
-        Route::resource('form-templates', FormTemplateController::class);
-        Route::put('form-templates/{formTemplate}/toggle-active', [FormTemplateController::class, 'toggleActive'])
-            ->name('form-templates.toggle-active');
-        
-        // Form Fields Management
-        Route::post('form-templates/{formTemplate}/fields', [FormFieldController::class, 'store'])
-            ->name('form-fields.store');
-        Route::put('form-templates/{formTemplate}/fields/{formField}', [FormFieldController::class, 'update'])
-            ->name('form-fields.update');
-        Route::delete('form-templates/{formTemplate}/fields/{formField}', [FormFieldController::class, 'destroy'])
-            ->name('form-fields.destroy');
-        Route::post('form-templates/{formTemplate}/fields/order', [FormFieldController::class, 'updateOrder'])
-            ->name('form-fields.order');
-        
-        // Form Submissions Management
-        Route::resource('form-submissions', FormSubmissionController::class)->except(['create', 'store']);
-        Route::post('form-submissions/{formSubmission}/review', [FormSubmissionController::class, 'review'])
-            ->name('form-submissions.review');
-        
-        // Form Documents Management
-        Route::post('form-documents', [FormDocumentController::class, 'store'])
-            ->name('form-documents.store');
-        Route::get('form-documents/{formDocument}', [FormDocumentController::class, 'show'])
-            ->name('form-documents.show');
-        Route::get('form-documents/{formDocument}/download', [FormDocumentController::class, 'download'])
-            ->name('form-documents.download');
-        Route::delete('form-documents/{formDocument}', [FormDocumentController::class, 'destroy'])
-            ->name('form-documents.destroy');
-        Route::post('form-documents/{formDocument}/review', [FormDocumentController::class, 'review'])
-            ->name('form-documents.review');
-    });
-    
-    // Routes that require employee data (for regular users only)
-    Route::middleware(['employee.data'])->group(function () {
-        // Public document routes for users with employee data
-        Route::get('/form-templates/list', [FormTemplateController::class, 'userList'])->name('form-templates.user-list');
-        Route::get('/form-templates/{formTemplate}/submit', [FormSubmissionController::class, 'create'])
-            ->name('form-submissions.create-from-template');
-        Route::post('/form-submissions', [FormSubmissionController::class, 'store'])->name('form-submissions.store');
-        Route::get('/form-submissions/my-submissions', [FormSubmissionController::class, 'userSubmissions'])
-            ->name('form-submissions.user-submissions');
-            
-        // Profile routes (except password change)
-        Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    });
-});
+// Profile routes (except password change)
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
 // // Example routes for demonstration purposes
 // Route::get('/examples/blank', [ExampleController::class, 'blank'])->name('examples.blank');
