@@ -18,22 +18,18 @@ class UserSeeder extends Seeder
         // Create admin user
         User::create([
             'username' => 'admin',
-            'email' => 'admin@example.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
-            'permissions' => json_encode(['all']),
             'is_active' => true,
             'last_login_at' => now(),
             'remember_token' => Str::random(10),
         ]);
 
-        // Create manager user
+        // Create admin user (previously manager)
         User::create([
             'username' => 'manager',
-            'email' => 'manager@example.com',
             'password' => Hash::make('password'),
-            'role' => 'manager',
-            'permissions' => json_encode(['view', 'create', 'edit']),
+            'role' => 'admin',
             'is_active' => true,
             'last_login_at' => now(),
             'remember_token' => Str::random(10),
@@ -42,10 +38,8 @@ class UserSeeder extends Seeder
         // Create regular user
         User::create([
             'username' => 'user',
-            'email' => 'user@example.com',
             'password' => Hash::make('password'),
             'role' => 'user',
-            'permissions' => json_encode(['view']),
             'is_active' => true,
             'last_login_at' => now(),
             'remember_token' => Str::random(10),
@@ -55,10 +49,8 @@ class UserSeeder extends Seeder
         for ($i = 1; $i <= 10; $i++) {
             User::create([
                 'username' => 'user' . $i,
-                'email' => 'user' . $i . '@example.com',
                 'password' => Hash::make('password'),
                 'role' => 'user',
-                'permissions' => json_encode(['view']),
                 'is_active' => rand(0, 1),
                 'last_login_at' => now()->subDays(rand(0, 30)),
                 'remember_token' => Str::random(10),

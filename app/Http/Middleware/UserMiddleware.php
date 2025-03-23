@@ -7,10 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class UserMiddleware
 {
     /**
-     * Handle an incoming request to check if user has admin role.
+     * Handle an incoming request to check if user has user role.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
@@ -29,8 +29,8 @@ class AdminMiddleware
         // Get authenticated user
         $user = Auth::user();
         
-        // Check if user has admin role
-        if ($user->role === 'admin' || $user->role === 'superadmin') {
+        // Check if user has user role (all roles are allowed as this is basic user access)
+        if ($user->role === 'user' || $user->role === 'admin' || $user->role === 'superadmin') {
             return $next($request);
         }
         

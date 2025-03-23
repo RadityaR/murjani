@@ -30,9 +30,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'username',
-        'email',
         'password',
-        'permissions',
         'is_active',
         'last_login_at',
         'role',
@@ -54,9 +52,7 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'permissions' => 'json',
         'is_active' => 'boolean',
         'last_login_at' => 'datetime',
     ];
@@ -83,16 +79,6 @@ class User extends Authenticatable
     public function reviewedDocuments(): HasMany
     {
         return $this->hasMany(Document::class, 'reviewed_by');
-    }
-
-    /**
-     * Check if the user has a specific permission.
-     */
-    public function hasPermission(string $permission): bool
-    {
-        $permissions = $this->permissions ?? [];
-        
-        return in_array($permission, $permissions) || in_array('all', $permissions);
     }
 
     /**

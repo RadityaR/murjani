@@ -48,7 +48,6 @@ class AuthController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'permissions' => $request->permissions ?? [],
         ]);
 
         if ($request->wantsJson()) {

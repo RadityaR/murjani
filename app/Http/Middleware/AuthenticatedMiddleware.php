@@ -7,10 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class AuthenticatedMiddleware
 {
     /**
-     * Handle an incoming request to check if user has admin role.
+     * Handle an incoming request to check if the user is authenticated.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
@@ -26,19 +26,7 @@ class AdminMiddleware
             return redirect()->route('login');
         }
 
-        // Get authenticated user
-        $user = Auth::user();
-        
-        // Check if user has admin role
-        if ($user->role === 'admin' || $user->role === 'superadmin') {
-            return $next($request);
-        }
-        
-        // User doesn't have the required role
-        if ($request->wantsJson()) {
-            return response()->json(['message' => 'Forbidden: Insufficient permissions'], 403);
-        }
-        
-        return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+        // User is authenticated, proceed with the request
+        return $next($request);
     }
 } 
