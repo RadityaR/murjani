@@ -16,10 +16,45 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AuthenticatedMiddleware;
 use App\Http\Middleware\SuperadminMiddleware;
 
-// Public routes (no authentication required)
+// Pre-login system selection routes
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('pre-login');
+})->name('systems.choose');
+
+Route::get('/kepegawaian', function () {
+    return view('kepegawaian');
+})->name('kepegawaian');
+
+Route::get('/diklat', function () {
+    return view('diklat');
+})->name('diklat');
+
+// Diklat subsystem routes
+Route::get('/pendidikan', function () {
+    return view('pendidikan');
+})->name('pendidikan');
+
+Route::get('/pelatihan', function () {
+    return view('pelatihan');
+})->name('pelatihan');
+
+// Pendidikan subsystem information pages
+Route::get('/tata-tertib', function () {
+    return view('tata-tertib');
+})->name('tata-tertib');
+
+Route::get('/hak-kewajiban', function () {
+    return view('hak-kewajiban');
+})->name('hak-kewajiban');
+
+Route::get('/preceptor', function () {
+    return view('preceptor');
+})->name('preceptor');
+
+// Pelatihan subsystem information pages
+Route::get('/prosedur-penelitian', function () {
+    return view('prosedur-penelitian');
+})->name('prosedur-penelitian');
 
 // Authentication routes - available but not required
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
