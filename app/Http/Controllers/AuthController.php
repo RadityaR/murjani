@@ -40,14 +40,16 @@ class AuthController extends Controller
     {
         $request->validate([
             'username' => 'required|string|max:255|unique:users',
-            'email' => 'nullable|string|email|max:255|unique:users',
+            'nip' => 'required|string|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
             'username' => $request->username,
-            'email' => $request->email,
+            'nip' => $request->nip,
             'password' => Hash::make($request->password),
+            'role' => 'user',
+            'is_active' => true,
         ]);
 
         if ($request->wantsJson()) {
@@ -70,15 +72,15 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'username' => 'required|string',
+            'nip' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        // Find the user by username without checking password
-        $user = User::where('username', $request->username)->first();
+        // Find the user by NIP
+        $user = User::where('nip', $request->nip)->first();
         
-        if ($user) {
-            // Directly log in the user without password verification
+        if ($user && Hash::check($request->password, $user->password)) {
+            // Log in the user
             Auth::login($user);
             
             // Update last login timestamp
@@ -113,7 +115,7 @@ class AuthController extends Controller
         }
 
         throw ValidationException::withMessages([
-            'username' => ['The provided credentials do not match our records.'],
+            'nip' => ['The provided credentials do not match our records.'],
         ]);
     }
 

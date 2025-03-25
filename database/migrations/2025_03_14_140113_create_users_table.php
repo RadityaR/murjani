@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('username')->unique();
+            $table->string('nip', 20)->unique()->comment('National Identity Number for government employees');
             $table->string('password');
             $table->enum('role', ['admin', 'user', 'superadmin'])->default('user');
             $table->boolean('is_active')->default(true);
@@ -24,6 +25,8 @@ return new class extends Migration
             
             // Add indexes for frequently queried fields
             $table->index('is_active');
+            $table->index('nip');
+            $table->index('role');
         });
     }
 
