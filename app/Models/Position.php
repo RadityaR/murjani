@@ -19,11 +19,8 @@ class Position extends Model
      */
     protected $fillable = [
         'title',
-        'code',
         'description',
-        'department_id',
-        'level',
-        'is_active',
+        'is_active'
     ];
 
     /**
@@ -32,8 +29,7 @@ class Position extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'level' => 'integer',
-        'is_active' => 'boolean',
+        'is_active' => 'boolean'
     ];
 
     /**

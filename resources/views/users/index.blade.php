@@ -155,11 +155,11 @@
                                                         <label class="custom-control-label" for="user-{{ $user->id }}"></label>
                                                     </div>
                                                 </td>
-                                                <td>{{ $user->name }}</td>
-                                                <td>{{ $user->email }}</td>
+                                                <td>{{ $user->employee?->full_name ?? '-' }}</td>
+                                                <td>{{ $user->employee?->email ?? '-' }}</td>
                                                 <td>{{ $user->nip }}</td>
                                                 <td>{{ $user->employee?->department?->name ?? '-' }}</td>
-                                                <td>{{ $user->position ?? '-' }}</td>
+                                                <td>{{ $user->employee?->position ?? '-' }}</td>
                                                 <td>
                                                     <div class="badge badge-{{ $user->role == 'admin' ? 'primary' : ($user->role == 'hr' ? 'info' : 'light') }}">
                                                         {{ ucfirst($user->role) }}
@@ -273,15 +273,19 @@
 
             // Initialize DataTable
             var table = $('#users-table').DataTable({
-                "ordering": true,
-                "pageLength": 10,
-                "responsive": true,
-                "processing": false,
-                "searching": false,
                 "paging": true,
+                "pageLength": 10,
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "ordering": true,
                 "info": true,
-                "autoWidth": false,
-                "dom": '<"top">rt<"bottom"lip><"clear">'
+                "searching": true,
+                "responsive": true,
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='fas fa-chevron-left'></i>",
+                        "next": "<i class='fas fa-chevron-right'></i>"
+                    }
+                }
             });
             
             // Load initial data into DataTable

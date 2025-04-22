@@ -44,12 +44,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="name">Nama Lengkap <span class="text-danger">*</span></label>
+                                <label for="name">Nama Lengkap</label>
                                 <input type="text" 
                                        id="name" 
                                        name="name" 
                                        class="form-control @error('name') is-invalid @enderror" 
-                                       value="{{ old('name', $user->name) }}" 
+                                       value="{{ old('name', $user->employee?->full_name) }}" 
                                        required>
                                 @error('name')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -57,95 +57,57 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="nip">NIP</label>
-                                <input type="text" 
-                                       id="nip" 
-                                       name="nip" 
-                                       class="form-control @error('nip') is-invalid @enderror" 
-                                       value="{{ old('nip', $user->nip) }}" 
-                                       readonly>
-                                @error('nip')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <small class="form-text text-muted">Nomor Induk Pegawai</small>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="identity_number">Nomor KTP</label>
-                                <input type="text" 
-                                       id="identity_number" 
-                                       name="identity_number" 
-                                       class="form-control @error('identity_number') is-invalid @enderror" 
-                                       value="{{ old('identity_number', $user->identity_number) }}">
-                                @error('identity_number')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="birth_date">Tanggal Lahir <span class="text-danger">*</span></label>
-                                <input type="text" 
-                                       id="birth_date" 
-                                       name="birth_date" 
-                                       class="form-control datepicker @error('birth_date') is-invalid @enderror" 
-                                       value="{{ old('birth_date', $user->birth_date ? $user->birth_date->format('Y-m-d') : '') }}"
+                                <label for="email">Email</label>
+                                <input type="email" 
+                                       id="email" 
+                                       name="email" 
+                                       class="form-control @error('email') is-invalid @enderror" 
+                                       value="{{ old('email', $user->employee?->email) }}" 
                                        required>
-                                @error('birth_date')
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone">Nomor Telepon</label>
+                                <input type="text" 
+                                       id="phone" 
+                                       name="phone" 
+                                       class="form-control @error('phone') is-invalid @enderror" 
+                                       value="{{ old('phone', $user->employee?->phone_number) }}" 
+                                       required>
+                                @error('phone')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="phone">Nomor Telepon <span class="text-danger">*</span></label>
+                                <label for="position">Posisi</label>
                                 <input type="text" 
-                                       id="phone" 
-                                       name="phone" 
-                                       class="form-control @error('phone') is-invalid @enderror" 
-                                       value="{{ old('phone', $user->phone) }}"
+                                       id="position" 
+                                       name="position" 
+                                       class="form-control @error('position') is-invalid @enderror" 
+                                       value="{{ old('position', $user->employee?->position) }}" 
                                        required>
-                                @error('phone')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="address">Alamat <span class="text-danger">*</span></label>
-                                <textarea id="address" 
-                                          name="address" 
-                                          class="form-control @error('address') is-invalid @enderror" 
-                                          style="height: 100px"
-                                          required>{{ old('address', $user->address) }}</textarea>
-                                @error('address')
+                                @error('position')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="form-group">
-                                <label for="gender">Jenis Kelamin <span class="text-danger">*</span></label>
-                                <select class="form-control @error('gender') is-invalid @enderror" name="gender" required>
-                                    <option value="">-- Pilih Jenis Kelamin --</option>
-                                    <option value="male" {{ old('gender', $user->gender) == 'male' ? 'selected' : '' }}>Laki-laki</option>
-                                    <option value="female" {{ old('gender', $user->gender) == 'female' ? 'selected' : '' }}>Perempuan</option>
+                                <label for="employee_status">Status Pegawai</label>
+                                <select class="form-control @error('employee_status') is-invalid @enderror" 
+                                        id="employee_status" 
+                                        name="employee_status" 
+                                        required>
+                                    <option value="">-- Pilih Status --</option>
+                                    <option value="contract" {{ old('employee_status', $user->employee?->employment_status) == 'contract' ? 'selected' : '' }}>Kontrak</option>
+                                    <option value="civil_servant" {{ old('employee_status', $user->employee?->employment_status) == 'civil_servant' ? 'selected' : '' }}>PNS</option>
+                                    <option value="temporary" {{ old('employee_status', $user->employee?->employment_status) == 'temporary' ? 'selected' : '' }}>Tidak Tetap</option>
                                 </select>
-                                @error('gender')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="religion">Agama <span class="text-danger">*</span></label>
-                                <select class="form-control select2 @error('religion') is-invalid @enderror" name="religion" required>
-                                    <option value="">-- Pilih Agama --</option>
-                                    <option value="Islam" {{ old('religion', $user->religion) == 'Islam' ? 'selected' : '' }}>Islam</option>
-                                    <option value="Kristen" {{ old('religion', $user->religion) == 'Kristen' ? 'selected' : '' }}>Kristen</option>
-                                    <option value="Katolik" {{ old('religion', $user->religion) == 'Katolik' ? 'selected' : '' }}>Katolik</option>
-                                    <option value="Hindu" {{ old('religion', $user->religion) == 'Hindu' ? 'selected' : '' }}>Hindu</option>
-                                    <option value="Buddha" {{ old('religion', $user->religion) == 'Buddha' ? 'selected' : '' }}>Buddha</option>
-                                    <option value="Konghucu" {{ old('religion', $user->religion) == 'Konghucu' ? 'selected' : '' }}>Konghucu</option>
-                                    <option value="Lainnya" {{ old('religion', $user->religion) == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
-                                </select>
-                                @error('religion')
+                                @error('employee_status')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -163,19 +125,6 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="position">Profesi <span class="text-danger">*</span></label>
-                                <input type="text" 
-                                       id="position" 
-                                       name="position" 
-                                       class="form-control @error('position') is-invalid @enderror" 
-                                       value="{{ old('position', $user->position) }}"
-                                       required>
-                                @error('position')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="form-group">
                                 <label for="department_id">Departemen <span class="text-danger">*</span></label>
                                 <select class="form-control select2 @error('department_id') is-invalid @enderror" name="department_id" required>
                                     <option value="">-- Pilih Departemen --</option>
@@ -192,15 +141,18 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="golongan_pangkat">Golongan/Pangkat</label>
-                                <input type="text" 
-                                       id="golongan_pangkat" 
-                                       name="golongan_pangkat" 
-                                       class="form-control @error('golongan_pangkat') is-invalid @enderror" 
-                                       value="{{ old('golongan_pangkat', $user->golongan_pangkat) }}" 
-                                       placeholder="Contoh: III/a">
-                                <small class="form-text text-muted">Masukkan golongan/pangkat (contoh: III/a)</small>
-                                @error('golongan_pangkat')
+                                <label for="rank_class_id">Golongan/Pangkat</label>
+                                <select class="form-control select2 @error('rank_class_id') is-invalid @enderror" 
+                                        id="rank_class_id" 
+                                        name="rank_class_id">
+                                    <option value="">-- Pilih Golongan/Pangkat --</option>
+                                    @foreach(\App\Models\RankClass::orderBy('name')->get() as $rankClass)
+                                        <option value="{{ $rankClass->id }}" {{ old('rank_class_id', $user->rank_class_id) == $rankClass->id ? 'selected' : '' }}>
+                                            {{ $rankClass->name }} - {{ $rankClass->description }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('rank_class_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -211,7 +163,7 @@
                                        id="jabatan" 
                                        name="jabatan" 
                                        class="form-control @error('jabatan') is-invalid @enderror" 
-                                       value="{{ old('jabatan', $user->jabatan) }}" 
+                                       value="{{ old('jabatan', $user->employee?->position) }}" 
                                        placeholder="Contoh: Kepala Seksi">
                                 <small class="form-text text-muted">Masukkan jabatan (contoh: Kepala Seksi)</small>
                                 @error('jabatan')
@@ -225,7 +177,7 @@
                                        id="unit_kerja" 
                                        name="unit_kerja" 
                                        class="form-control @error('unit_kerja') is-invalid @enderror" 
-                                       value="{{ old('unit_kerja', $user->unit_kerja) }}" 
+                                       value="{{ old('unit_kerja', $user->employee?->unit_kerja) }}" 
                                        placeholder="Contoh: Puskesmas">
                                 <small class="form-text text-muted">Masukkan unit kerja (contoh: Puskesmas)</small>
                                 @error('unit_kerja')

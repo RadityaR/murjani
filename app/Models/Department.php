@@ -19,10 +19,8 @@ class Department extends Model
      */
     protected $fillable = [
         'name',
-        'code',
         'description',
-        'parent_id',
-        'is_active',
+        'is_active'
     ];
 
     /**
@@ -31,7 +29,7 @@ class Department extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'is_active' => 'boolean',
+        'is_active' => 'boolean'
     ];
 
     /**

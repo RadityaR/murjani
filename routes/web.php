@@ -15,6 +15,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AuthenticatedMiddleware;
 use App\Http\Middleware\SuperadminMiddleware;
+use App\Http\Controllers\PositionController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\UnitController;
 
 // Pre-login system selection routes
 Route::get('/', function () {
@@ -103,6 +106,8 @@ Route::middleware(AdminMiddleware::class)->group(function () {
 
     // Employee management
     Route::get('employees', [EmployeeController::class, 'index'])->name('employees.index');
+    Route::get('employees/export/pdf', [EmployeeController::class, 'exportPdf'])->name('employees.export.pdf');
+    Route::get('employees/export/excel', [EmployeeController::class, 'exportExcel'])->name('employees.export.excel');
     Route::get('employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
     Route::get('employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
     Route::put('employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
@@ -150,6 +155,17 @@ Route::middleware(SuperadminMiddleware::class)->group(function () {
     Route::resource('users', UserController::class);
     Route::post('users/bulk-action', [UserController::class, 'bulkAction'])->name('users.bulk-action');
     Route::get('users/filter', [UserController::class, 'filter'])->name('users.filter');
+});
+
+// Position Routes
+Route::middleware(AdminMiddleware::class)->group(function () {
+    Route::resource('positions', PositionController::class);
+});
+
+// Department and Unit Routes
+Route::middleware(AdminMiddleware::class)->group(function () {
+    Route::resource('departments', DepartmentController::class);
+    Route::resource('units', UnitController::class);
 });
 
 // // Example routes for demonstration purposes

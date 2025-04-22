@@ -248,10 +248,19 @@
         $(document).ready(function() {
             // Initialize DataTable for employee table
             $('#employee-table').DataTable({
-                "paging": false,
+                "paging": true,
+                "pageLength": 10,
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 "ordering": true,
-                "info": false,
-                "searching": false
+                "info": true,
+                "searching": true,
+                "responsive": true,
+                "language": {
+                    "paginate": {
+                        "previous": "<i class='fas fa-chevron-left'></i>",
+                        "next": "<i class='fas fa-chevron-right'></i>"
+                    }
+                }
             });
         });
     </script>

@@ -38,6 +38,17 @@
                 <a class="nav-link" href="{{ route('employees.index') }}"><i class="fas fa-user-tie"></i> <span>Data Pegawai</span></a>
             </li>
             
+            <li class="menu-header">Options</li>
+            <li class="{{ Request::is('options/positions*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('positions.index') }}"><i class="fas fa-briefcase"></i> <span>Profesi</span></a>
+            </li>
+            <li class="{{ Request::is('options/departments*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('departments.index') }}"><i class="fas fa-building"></i> <span>Departemen</span></a>
+            </li>
+            <li class="{{ Request::is('options/units*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('units.index') }}"><i class="fas fa-sitemap"></i> <span>Unit Kerja</span></a>
+            </li>
+
             @if (Auth::user()->role === 'superadmin')
             <li class="menu-header">Hak Akses</li>
             <li class="{{ Request::is('hakakses') ? 'active' : '' }}">

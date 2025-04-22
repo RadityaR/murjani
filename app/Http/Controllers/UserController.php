@@ -48,19 +48,22 @@ class UserController extends Controller
 
         // Set default values for other fields
         $userData = [
-            'name' => $validated['name'],
+            'username' => $validated['email'],
             'nip' => $validated['nip'],
             'password' => Hash::make($validated['password']),
-            'email' => $validated['email'],
             'is_active' => $validated['status'] === 'active',
-            'status' => $validated['status'],
-            'phone' => null,
-            'position' => null,
-            'notes' => null,
-            'permissions' => ['user'] // Default permission
+            'role' => 'user', // Default role
         ];
         
-        User::create($userData);
+        $user = User::create($userData);
+
+        // Create employee record
+        $employee = new \App\Models\Employee([
+            'user_id' => $user->id,
+            'full_name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
+        $employee->save();
 
         return redirect()->route('users.index')
             ->with('success', 'User created successfully.');

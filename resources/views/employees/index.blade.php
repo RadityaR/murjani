@@ -43,6 +43,21 @@
         <div class="card">
             <div class="card-header">
                 <h4>Daftar Pegawai</h4>
+                <div class="card-header-action">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{{ route('employees.export.pdf') }}?rank={{ request('rank') }}&position={{ request('position') }}&unit={{ request('unit') }}">
+                                <i class="fas fa-file-pdf"></i> Export PDF
+                            </a>
+                            <a class="dropdown-item" href="{{ route('employees.export.excel') }}?rank={{ request('rank') }}&position={{ request('position') }}&unit={{ request('unit') }}">
+                                <i class="fas fa-file-excel"></i> Export Excel
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="row mb-4">
@@ -140,8 +155,8 @@
                     </table>
                 </div>
                 
-                <div class="mt-4">
-                    {{ $employees->links() }}
+                <div class="mt-4 d-flex justify-content-center">
+                    {{ $employees->links('pagination::bootstrap-4') }}
                 </div>
             </div>
         </div>

@@ -23,29 +23,24 @@ class ProfileController extends Controller
 
             $user = Auth::user();
             
-            // Update user information
-            $user->name = $request->input('name');
-            $user->email = $request->input('email');
-            $user->phone = $request->input('phone');
-            $user->position = $request->input('position');
-            $user->employee_status = $request->input('employee_status');
-            $user->golongan_pangkat = $request->input('golongan_pangkat');
-            $user->jabatan = $request->input('jabatan');
-            $user->unit_kerja = $request->input('unit_kerja');
-            $user->address = $request->input('address');
-            $user->save();
-
             // Get or create employee record
-            $employee = $user->employee ?? $user->employee()->create([
-                'name' => $user->name,
-                'email' => $user->email,
-                'phone' => $user->phone,
-                'employee_status' => $user->employee_status,
-                'golongan_pangkat' => $user->golongan_pangkat,
-                'jabatan' => $user->jabatan,
-                'unit_kerja' => $user->unit_kerja,
-                'address' => $user->address,
-            ]);
+            $employee = $user->employee;
+            if (!$employee) {
+                $employee = new \App\Models\Employee();
+                $employee->user_id = $user->id;
+            }
+
+            // Update employee information
+            $employee->full_name = $request->input('name');
+            $employee->email = $request->input('email');
+            $employee->phone_number = $request->input('phone');
+            $employee->position = $request->input('position');
+            $employee->employment_status = $request->input('employee_status');
+            $employee->rank_class = $request->input('rank_class_id');
+            $employee->unit = $request->input('unit_kerja');
+            $employee->address = $request->input('address');
+            $employee->birth_date = $request->input('birth_date');
+            $employee->save();
 
             // Update department_id if provided
             if ($request->has('department_id')) {
@@ -77,11 +72,10 @@ class ProfileController extends Controller
             }
 
             DB::commit();
-
-            return redirect()->route('profile.edit')->with('status', 'Profile updated successfully!');
+            return redirect()->route('profile.edit')->with('success', 'Profile updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Error updating profile: ' . $e->getMessage());
+            return redirect()->route('profile.edit')->with('error', 'Failed to update profile: ' . $e->getMessage());
         }
     }
 

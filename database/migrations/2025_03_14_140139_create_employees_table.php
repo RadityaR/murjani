@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->string('nip')->unique()->nullable()->comment('National Identity Number for government employees');
             $table->string('full_name');
+            $table->string('email')->nullable();
             $table->string('identity_number')->nullable()->comment('National ID card number');
             $table->string('position')->nullable();
             $table->string('department')->nullable();

@@ -17,6 +17,9 @@ use App\Models\Department;
 use App\Models\Position;
 use App\Models\Unit;
 use App\Models\RankClass;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\EmployeesExport;
 
 class EmployeeController extends Controller
 {
@@ -344,6 +347,56 @@ class EmployeeController extends Controller
                 ->with('success', 'Document uploaded successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error uploading document: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Export employees to PDF
+     */
+    public function exportPdf(Request $request)
+    {
+        try {
+            $query = Employee::with(['department', 'position', 'unit', 'rankClass', 'user']);
+
+            // Apply filters if provided
+            if ($request->filled('rank')) {
+                $query->whereHas('rankClass', function($q) use ($request) {
+                    $q->where('name', $request->rank);
+                });
+            }
+
+            if ($request->filled('position')) {
+                $query->whereHas('position', function($q) use ($request) {
+                    $q->where('title', $request->position);
+                });
+            }
+
+            if ($request->filled('unit')) {
+                $query->whereHas('unit', function($q) use ($request) {
+                    $q->where('name', $request->unit);
+                });
+            }
+
+            $employees = $query->get();
+
+            $pdf = PDF::loadView('employees.export.pdf', compact('employees'));
+            return $pdf->download('daftar-pegawai.pdf');
+        } catch (\Exception $e) {
+            Log::error('Error exporting employees to PDF: ' . $e->getMessage());
+            return back()->with('error', 'Error exporting to PDF: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Export employees to Excel
+     */
+    public function exportExcel(Request $request)
+    {
+        try {
+            return Excel::download(new EmployeesExport($request->only(['rank', 'position', 'unit'])), 'daftar-pegawai.xlsx');
+        } catch (\Exception $e) {
+            Log::error('Error exporting employees to Excel: ' . $e->getMessage());
+            return back()->with('error', 'Error exporting to Excel: ' . $e->getMessage());
         }
     }
 } 
